@@ -36,12 +36,12 @@ html {
   }
   
   .container {
-    margin: 0 20px;
+    margin: 20px 20px;
   }
   
-  @media (min-width: 768px) {
+  @media (min-width: 840px) {
     .container {
-      max-width: 728px;  /* Resizes the container to 728px for large screens */
+      max-width: 840px;  /* Resizes the container to 728px for large screens */
       margin: 0 auto;
     }
   }

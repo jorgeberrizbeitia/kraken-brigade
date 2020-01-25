@@ -1,14 +1,24 @@
-"use strict"
+"use strict";
 
-function Tentacle () {
-    this.x = 0;
-    this.y = 0
-    this.direction = "down"
-    this.size = 20;
+function Tentacle(canvas, x) {
+  this.canvas = canvas;
+  this.ctx = this.canvas.getContext("2d");
+
+  this.size = 30;
+  this.x = x;
+  this.y = 0;
+  this.speed = 1;
 }
 
 // to add tentacles
-Tentacle.prototype.draw = function () {}
+Tentacle.prototype.draw = function() {
+  this.ctx.fillStyle = "green";
 
-// to set automatic cannonball movement
-Tentacle.prototype.move = function () {}
+  // fillRect(x, y, width, height)
+  this.ctx.fillRect(this.x, this.y, this.size, this.size);
+};
+
+// to set automatic tentacle movement
+Tentacle.prototype.move = function() {
+    this.y = this.y + this.speed;
+};

@@ -32,7 +32,6 @@ function main() {
     var startButton = splashScreen.querySelector("#start-btn");
 
     startButton.addEventListener("click", function() {
-      createGameScreen();
       startGame();
     });
   }
