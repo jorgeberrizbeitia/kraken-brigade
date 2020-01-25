@@ -42,22 +42,40 @@ Kraken-Brigade is a game where the player has to move ships horizontally and sho
 
 # ship.js 
 
-- Ship () {}
+- Ship () {
+    this.x;
+    this.y;
+    this.direction;
+    this.size
+}
 - draw () {}
 - move () {}
 - shoot () {}
+- checkScreenCollision () {}
 
 # tentacle.js 
 
-- Tentacle () {}
+- Tentacle () {
+    this.x;
+    this.y;
+    this.direction;
+    this.size
+}
 - draw () {}
 - move () {}
+- checkCollisionBotton () {}
 
 # cannonball.js 
 
-- Cannonball () {}
+- Cannonball () {
+    this.x;
+    this.y;
+    this.direction;
+    this.size
+}
 - draw () {}
 - move () {}
+- checkCollisionTop () {}
 
 ## States y States Transitions
 Definition of the different states and their transition (transition functions)
@@ -68,27 +86,27 @@ Definition of the different states and their transition (transition functions)
 
 ## Task
 
-main - buildDom
-main - buildSplashScreen
-main - addEventListener
-main - buildGameScreen
-main - buildGameOverScreen
-game - startLoop
-game - addShip
-game - addTentacle
-game - buildCanvas
-game - updateCanvas
-game - drawCanvas
-tentacle - draw
-tentacle - move
-ship - draw
-ship - move
-ship - shoot
-cannonball - draw
-cannonball - move
-game - checkCollision
-game - GameOver
-game - addEventListener
+- main - buildDom
+- main - buildSplashScreen
+- main - addEventListener
+- main - buildGameScreen
+- main - buildGameOverScreen
+- game - startLoop
+- game - buildCanvas
+- game - updateCanvas
+- game - drawCanvas
+- tentacle - draw
+- tentacle - move
+- game - addTentacle
+- ship - draw
+- ship - move
+- ship - shoot
+- game - addShip
+- cannonball - draw
+- cannonball - move
+- game - checkCollision
+- game - GameOver
+- game - addEventListener
 
 ## Links
 

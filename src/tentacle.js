@@ -1,6 +1,11 @@
 "use strict"
 
-function Tentacle () {}
+function Tentacle () {
+    this.x = 0;
+    this.y = 0
+    this.direction = "down"
+    this.size = 20;
+}
 
 // to add tentacles
 Tentacle.prototype.draw = function () {}
