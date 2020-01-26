@@ -6,12 +6,13 @@ function Game() {
   this.ctx = null;
 
   this.ship = null;
-  this.ship2 = null;
-  this.shipArr = [];
+  this.ship2 = null; 
+  this.shipArr = []; 
   this.tentacleArr = [];
   this.cannonballArr = [];
 
-  this.shootDelay = false;
+  this.selectedShip = 0;
+  this.shootDelay = false; // TEST FOR ADDING SHOOT DELAY
 
   this.scoreBoard = 0;
   this.score = 0;
@@ -22,6 +23,7 @@ function Game() {
 
 // to start game
 Game.prototype.start = function() {
+
   // canvas creation
   this.canvasContainer = document.querySelector(".canvas-container");
   this.canvas = this.canvasContainer.querySelector("canvas");
@@ -35,36 +37,71 @@ Game.prototype.start = function() {
   this.canvas.setAttribute("width", containerWidth);
   this.canvas.setAttribute("height", containerHeight);
 
-  // add initial ship
-  this.ship = new Ship(this.canvas, (this.canvas.height - 50));
+  // add initial ships
+  this.ship = new Ship(this.canvas, this.canvas.height - 50);
+  this.ship2 = new Ship(this.canvas, this.canvas.height - 110);
 
-    // shoot cannonball with Arrow Up keydown
-  this.handleKeyDown = function(event) {
+  // inserting ships into their array
+  this.shipArr.push(this.ship);
+  this.shipArr.push(this.ship2);
+
+  // shoot cannonball with Arrow Up keydown
+  this.shootCannonballs = function() {
     console.log("before the event", this.shootDelay);
 
-    if (event.key === "ArrowUp" && !this.shootDelay) {
-      var currentShipPosition = this.ship.x + this.ship.size / 4;
-      var newCannonball = new Cannonball(this.canvas, currentShipPosition);
+    if (!this.shootDelay) {
+      // to determine which ship is shooting and its position
+      var currentShipPositionX = this.shipArr[this.selectedShip].x + this.shipArr[this.selectedShip].size / 4;
+      var currentShipPositionY = this.shipArr[this.selectedShip].y;
 
+      // to create new cannonball and push into cannonballs array
+      var newCannonball = new Cannonball(this.canvas, currentShipPositionX, currentShipPositionY);
       this.cannonballArr.push(newCannonball);
 
-    //   this.shootDelay = true;
-    //   console.log("after the change", this.shootDelay);
+      // TEST FOR ADDING SHOOT DELAY
 
-    //   function setDelay() {
-    //     this.shootDelay = false;
-    //     console.log("after the delay", this.shootDelay);
-    //   }
+      //   this.shootDelay = true;
+      //   console.log("after the change", this.shootDelay);
 
-    //   var timerId = setTimeout(setDelay, 2000);
+      //   function setDelay() {
+      //     this.shootDelay = false;
+      //     console.log("after the delay", this.shootDelay);
+      //   }
 
-    //   console.log("after the handlekeydown", this.shootDelay);
+      //   var timerId = setTimeout(setDelay, 2000);
+
+      //   console.log("after the handlekeydown", this.shootDelay);
     }
   };
 
-  // keydown event listeners (with bind fix)
-  window.addEventListener("keydown", this.ship.move.bind(this));
-  window.addEventListener("keydown", this.handleKeyDown.bind(this));
+  // to change ship to control
+  this.changeShip = function() {
+    if (this.selectedShip === 1) {
+      this.selectedShip = 0;
+    } else {
+      this.selectedShip = 1;
+    }
+    console.log(this.selectedShip);
+  };
+
+  // keydown event listeners
+  this.keyDownEvents = function(event) {
+    switch (event.key) {
+      case "ArrowDown":
+        this.changeShip();
+        break;
+      case "ArrowRight":
+        this.shipArr[this.selectedShip].moveRight();
+        break;
+      case "ArrowLeft":
+        this.shipArr[this.selectedShip].moveLeft();
+        break;
+      case "ArrowUp":
+        this.shootCannonballs();
+        break;
+    }
+  };
+  window.addEventListener("keydown", this.keyDownEvents.bind(this));
 
   // start the game loop
   this.startLoop();
@@ -73,15 +110,26 @@ Game.prototype.start = function() {
 // GAME LOOP
 Game.prototype.startLoop = function() {
   var loop = function() {
-    // 1. create enemies randomly
+    // 1. create tentacles randomly
     if (Math.random() > 0.99) {
-      var randomPosition = this.canvas.width * Math.random();
-      var newTentacle = new Tentacle(this.canvas, randomPosition);
+      // determine random position
+      var randomPosition = 0;
+      var randomCalc = this.canvas.width * Math.random();
 
+      if (randomCalc < 10) {
+          randomPosition = 10
+      } else if (randomCalc > this.canvas.width - 50) {
+          randomPosition = this.canvas.width - 50
+      } else {
+          randomPosition = randomCalc
+      }
+
+      // to create new tentacle and add to their array
+      var newTentacle = new Tentacle(this.canvas, randomPosition);
       this.tentacleArr.push(newTentacle);
     }
 
-    // 2. move enemies
+    // 2. move tentacles
     this.tentacleArr.forEach(function(element) {
       element.move();
     });
@@ -108,7 +156,10 @@ Game.prototype.startLoop = function() {
 
     // UPDATE THE CANVAS
     // 1. draw the ship
-    this.ship.draw();
+    this.shipArr.forEach(function(element) {
+      element.draw();
+    });
+    // this.ship.draw();
 
     // 2. draw tentacles
     this.tentacleArr.forEach(function(element) {

@@ -1,13 +1,13 @@
 "use strict";
 
 // cannonball construct
-function Cannonball(canvas, shipPosition) {
+function Cannonball(canvas, shipPositionX, shipPositionY) {
   this.canvas = canvas;
   this.ctx = this.canvas.getContext("2d");
 
   this.size = 25;
-  this.x = shipPosition;
-  this.y = canvas.height - 50;
+  this.x = shipPositionX;
+  this.y = shipPositionY;
   this.speed = 5;
 }
 

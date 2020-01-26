@@ -18,13 +18,20 @@ Ship.prototype.draw = function() {
   this.ctx.fillRect(this.x, this.y, this.size, this.size);
 };
 
-// to move ship horizontally
-Ship.prototype.move = function(event) {
-  var shipLeftBorder = this.ship.x;
-  var shipRightBorder = this.ship.x + this.ship.size;
-  if (event.key === "ArrowRight" && shipRightBorder < this.canvas.width - 14) {
-    this.ship.x = this.ship.x + 32;
-  } else if (event.key === "ArrowLeft" && shipLeftBorder > 14) {
-    this.ship.x = this.ship.x - 32;
+// to move ship horizontally to the right
+Ship.prototype.moveRight = function() {
+  var shipRightBorder = this.x + this.size;
+  if (shipRightBorder < this.canvas.width - 14) {
+    this.x = this.x + 32;
   }
 };
+
+// to move ship horizontally to the left
+Ship.prototype.moveLeft = function() {
+  var shipLeftBorder = this.x;
+  if (shipLeftBorder > 14) {
+    this.x = this.x - 32;
+  }
+};
+
+

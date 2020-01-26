@@ -44,12 +44,12 @@ function main() {
     var gameScreen = buildDom(`
     <main class="game container">
     <header>
-      <div class="lives">
-        <span class="label">Score Kills:</span>
+      <div class="ships">
+        <span class="label">Ships:</span>
         <span class="value"></span>
       </div>
       <div class="score">
-        <span class="label">Score Time:</span>
+        <span class="label">Score:</span>
         <span class="value"></span>
       </div>
     </header>
