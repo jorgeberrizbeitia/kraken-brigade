@@ -13,7 +13,6 @@ function buildDom(htmlString) {
 function main() {
   var game;
   var splashScreen;
-  var gameScreen;
   var gameOverScreen;
 
   // SETTING GAME SPLASH SCREEN
@@ -42,9 +41,7 @@ function main() {
 
   // SETTING GAME SCREEN
   function createGameScreen() {
-    removeSplashScreen();
-
-    gameScreen = buildDom(`
+    var gameScreen = buildDom(`
     <main class="game container">
     <header>
       <div class="lives">
@@ -63,25 +60,63 @@ function main() {
     `);
 
     document.body.appendChild(gameScreen);
+
+    // return so we can store page in game as per startGame function
+    return gameScreen;
   }
 
-  function removeGameScreen() {}
+  function removeGameScreen() {
+    // gameScreen is stored in game per startGame function
+    game.gameScreen.remove();
+  }
 
   // SETTING GAME OVER SCREEN
-  function createGameOverScreen() {}
+  function createGameOverScreen(score) {
+    gameOverScreen = buildDom(`
+    <main>
+        <h1>YARR!!</h1>
+        <div id="score">
+            <h2>your score is... ${score}</h2>
+        </div>
+        <button id="restart-btn">Restart</button>
+    </main>`);
 
-  function removeGameOverScreen() {}
+    document.body.appendChild(gameOverScreen);
+
+    var button = gameOverScreen.querySelector("button");
+
+    button.addEventListener('click', startGame);
+  }
+
+  function removeGameOverScreen() {
+    // by checking we avoid an issue when removing this when game starts on the first time
+    if (gameOverScreen !== undefined) {
+      gameOverScreen.remove();
+    }
+  }
 
   // SETTING THE GAME STATE
 
   function startGame() {
-      game = new Game();
-      game.gameScreen = createGameScreen();
+    removeSplashScreen();
+    removeGameOverScreen();
 
-      game.start();
+    game = new Game();
+    game.gameScreen = createGameScreen();
+
+    // function that starts the game loop
+    game.start();
+
+    // after the game loop inside game.start ends, below callback function will run
+    game.passGameOverCallback(gameOver);
   }
 
-  function gamerOver() {}
+  function gameOver() {
+    removeGameScreen();
+    createGameOverScreen(this.score);
+
+    console.log("game over in main");
+  }
 
   // to initialize the splash creen on first page load
   createSplashScreen();

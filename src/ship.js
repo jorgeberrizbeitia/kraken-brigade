@@ -18,7 +18,7 @@ Ship.prototype.draw = function() {
   this.ctx.fillRect(this.x, this.y, this.size, this.size);
 };
 
-// to move horizontally
+// to move ship horizontally
 Ship.prototype.move = function(event) {
   var shipLeftBorder = this.ship.x;
   var shipRightBorder = this.ship.x + this.ship.size;
@@ -27,9 +27,4 @@ Ship.prototype.move = function(event) {
   } else if (event.key === "ArrowLeft" && shipLeftBorder > 14) {
     this.ship.x = this.ship.x - 32;
   }
-};
-
-// to shoot cannonballs
-Ship.prototype.shoot = function(event) {
-  
 };

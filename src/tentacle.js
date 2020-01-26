@@ -22,3 +22,17 @@ Tentacle.prototype.draw = function() {
 Tentacle.prototype.move = function() {
     this.y = this.y + this.speed;
 };
+
+// to check if tentacles reached the bottom of the screen
+Tentacle.prototype.reachBottom = function (tentacle) {
+    var tentacleBottom = tentacle.y + tentacle.size;
+    var bottomOfScreen = this.canvas.height - tentacle.size
+
+    // below is a check to not consider tentacles destroyed by cannonballs which are sent below this point
+    var passBottomOfScreen = this.canvas.height + tentacle.size
+
+    if (tentacleBottom > bottomOfScreen && tentacleBottom < passBottomOfScreen) {
+        return true
+    }
+
+}
