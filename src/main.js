@@ -45,11 +45,11 @@ function main() {
     <main class="game container">
     <header>
       <div class="lives">
-        <span class="label">Lives:</span>
+        <span class="label">Score Kills:</span>
         <span class="value"></span>
       </div>
       <div class="score">
-        <span class="label">Score:</span>
+        <span class="label">Score Time:</span>
         <span class="value"></span>
       </div>
     </header>

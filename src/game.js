@@ -6,6 +6,8 @@ function Game() {
   this.ctx = null;
 
   this.ship = null;
+  this.ship2 = null;
+  this.shipArr = [];
   this.tentacleArr = [];
   this.cannonballArr = [];
 
@@ -34,62 +36,35 @@ Game.prototype.start = function() {
   this.canvas.setAttribute("height", containerHeight);
 
   // add initial ship
-  this.ship = new Ship(this.canvas);
+  this.ship = new Ship(this.canvas, (this.canvas.height - 50));
 
-  // shoot cannonball keydown
-  //   window.addEventListener("keydown", (function(canShoot) {
-  //       return function(event) {
-  //         if (!canShoot) return false;
-  //         canShoot = false;
-  //         setTimeout(function() {
-  //           canShoot = true;
-  //         }, 500);
-  //         if (event.key === "ArrowUp") {
-  //           var currentShipPosition = this.ship.x + this.ship.size / 4;
-  //           var newCannonball = new Cannonball(this.canvas, currentShipPosition);
-  //           this.cannonballArr.push(newCannonball);
-  //         }
-  //       };
-  //     }).bind(this), (true), false
-  //   );
-
+    // shoot cannonball with Arrow Up keydown
   this.handleKeyDown = function(event) {
-    console.log(this.shootDelay);
-    if (event.key === "ArrowUp" && this.shootDelay === false) {
+    console.log("before the event", this.shootDelay);
+
+    if (event.key === "ArrowUp" && !this.shootDelay) {
       var currentShipPosition = this.ship.x + this.ship.size / 4;
       var newCannonball = new Cannonball(this.canvas, currentShipPosition);
 
       this.cannonballArr.push(newCannonball);
 
-      this.shootDelay = true;
-      console.log(this.shootDelay)
+    //   this.shootDelay = true;
+    //   console.log("after the change", this.shootDelay);
 
-      function setDelay() {
-        this.shootDelay = false;
-        console.log(this.shootDelay);
-      }
+    //   function setDelay() {
+    //     this.shootDelay = false;
+    //     console.log("after the delay", this.shootDelay);
+    //   }
 
-      var timer = setTimeout(setDelay, 2000);
+    //   var timerId = setTimeout(setDelay, 2000);
 
-    } else {
-      console.log("cant shoot yet");
+    //   console.log("after the handlekeydown", this.shootDelay);
     }
   };
-
-  //   this.handleKeyUp = function(event) {
-  //       if (event.key === "ArrowUp") {
-  //           function changeDelay () {
-  //               this.shootDelay = true
-  //           };
-  //           var timer = setTimeout(changeDelay, 500);
-  //           console.log(this.shootDelay)
-  //       }
-  //     }
 
   // keydown event listeners (with bind fix)
   window.addEventListener("keydown", this.ship.move.bind(this));
   window.addEventListener("keydown", this.handleKeyDown.bind(this));
-  //   window.addEventListener("keyup", this.handleKeyUp.bind(this))
 
   // start the game loop
   this.startLoop();
@@ -164,7 +139,8 @@ Game.prototype.checkCannonballHit = function() {
       if (cannonball.cannonballHit(tentacle)) {
         tentacle.y = this.canvas.height + tentacle.size;
         cannonball.y = 0 - cannonball.size;
-        this.score = this.score + 100;
+        // extra points for killing tentacles
+        this.score = this.score + 200;
       }
     }, this);
   }, this);

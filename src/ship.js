@@ -1,13 +1,13 @@
 "use strict";
 
 // ship construct
-function Ship(canvas) {
+function Ship(canvas, yPosition) {
   this.canvas = canvas;
   this.ctx = canvas.getContext("2d");
 
   this.size = 50;
   this.x = 10;
-  this.y = canvas.height - this.size;
+  this.y = yPosition;
 }
 
 // to add ship
