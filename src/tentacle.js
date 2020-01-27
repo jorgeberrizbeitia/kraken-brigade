@@ -5,10 +5,10 @@ function Tentacle(canvas, x) {
   this.ctx = this.canvas.getContext("2d");
 
   this.height = 50;
-  this.width = 30;
+  this.width = 25;
   this.x = x;
   this.y = 0;
-  this.speed = 5;
+  this.speed = 3;
 }
 
 // to add tentacles
@@ -21,42 +21,50 @@ Tentacle.prototype.draw = function() {
 
 // to set automatic tentacle movement
 Tentacle.prototype.move = function() {
-    this.y = this.y + this.speed;
+  this.y = this.y + this.speed;
 };
 
 // to check if tentacles reached the bottom of the screen
-Tentacle.prototype.reachBottom = function (tentacle) {
-    var tentacleBottom = tentacle.y + tentacle.height;
-    var bottomOfScreen = this.canvas.height
+Tentacle.prototype.reachBottom = function(tentacle) {
+  var tentacleBottom = tentacle.y + tentacle.height;
+  var bottomOfScreen = this.canvas.height;
 
-    // below is a check to not consider tentacles destroyed by cannonballs which are sent below this point
-    var passBottomOfScreen = this.canvas.height + tentacle.height
+  // below is a check to not consider tentacles destroyed by cannonballs which are sent below this point
+  var passBottomOfScreen = this.canvas.height + tentacle.height;
 
-    if (tentacleBottom > bottomOfScreen && tentacleBottom < passBottomOfScreen) {
-        return true
-    }
-}
+  if (tentacleBottom >= bottomOfScreen && tentacleBottom <= passBottomOfScreen) {
+    return true;
+  }
+};
 
-
+// to check if tentacles stacked on top of another tentacle
 Tentacle.prototype.tentacleStack = function(stackedTentacle) {
-    var tentacleLeft = this.x;
-    var tentacleRight = this.x + this.size;
-    var tentacleTop = this.y;
-    var tentacleBottom = this.y + this.size;
+  var tentacleLeft = this.x;
+  var tentacleRight = this.x + this.width;
+  var tentacleTop = this.y;
+  var tentacleBottom = this.y + this.height;
 
-    var stackedTentacleLeft = tentacle.x;
-    var stackedTentacleRight = tentacle.x + tentacle.width;
-    var stackedTentacleTop = tentacle.y;
-    var stackedTentacleBottom = tentacle.y + tentacle.height;
+  var stackedTentacleLeft = stackedTentacle.x;
+  var stackedTentacleRight = stackedTentacle.x + stackedTentacle.width;
+  var stackedTentacleTop = stackedTentacle.y;
+  var stackedTentacleBottom = stackedTentacle.y + stackedTentacle.height;
 
-    var crossRight = tentacleLeft <= stackedTentacleRight && tentacleRight >= stackedTentacleLeft;
-    var crossLeft = tentacleRight >= stackedTentacleLeft && tentacleLeft <= stackedTentacleRight;
-    var crossTop = tentacleBottom >= stackedTentacleTop && tentacleTop <= stackedTentacleBottom;
-    var crossBottom = tentacleBottom <= stackedTentacleBottom && tentacleBottom >= stackedTentacleTop;
-  
-    if ((crossLeft || crossRight) && (crossTop || crossBottom)) {
-      return true;
-    }
-  
-    return false;
-  };
+  var crossRight =
+    tentacleLeft <= stackedTentacleRight &&
+    tentacleRight >= stackedTentacleLeft;
+  var crossLeft =
+    tentacleRight >= stackedTentacleLeft &&
+    tentacleLeft <= stackedTentacleRight;
+  var crossTop =
+    tentacleBottom >= stackedTentacleTop &&
+    tentacleTop <= stackedTentacleBottom;
+  var crossBottom =
+    tentacleBottom <= stackedTentacleBottom &&
+    tentacleBottom >= stackedTentacleTop;
+
+  if ((crossLeft || crossRight) && (crossTop || crossBottom)) {
+    return true;
+  }
+
+  return false;
+};

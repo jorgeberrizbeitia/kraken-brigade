@@ -36,10 +36,14 @@ Cannonball.prototype.cannonballHit = function(tentacle) {
   var tentacleTop = tentacle.y;
   var tentacleBottom = tentacle.y + tentacle.height;
 
-  var crossRight = tentacleLeft <= cannonballRight && tentacleRight >= cannonballLeft;
-  var crossLeft = tentacleRight >= cannonballLeft && tentacleLeft <= cannonballRight;
-  var crossTop = tentacleBottom >= cannonballTop && tentacleTop <= cannonballBottom;
-  var crossBottom = tentacleBottom <= cannonballBottom && tentacleBottom >= cannonballTop;
+  var crossRight =
+    tentacleLeft <= cannonballRight && tentacleRight >= cannonballLeft;
+  var crossLeft =
+    tentacleRight >= cannonballLeft && tentacleLeft <= cannonballRight;
+  var crossTop =
+    tentacleBottom >= cannonballTop && tentacleTop <= cannonballBottom;
+  var crossBottom =
+    tentacleBottom <= cannonballBottom && tentacleBottom >= cannonballTop;
 
   if ((crossLeft || crossRight) && (crossTop || crossBottom)) {
     return true;

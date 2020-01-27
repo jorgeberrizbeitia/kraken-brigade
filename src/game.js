@@ -60,9 +60,21 @@ Game.prototype.start = function() {
         break;
       case "ArrowRight":
         this.shipArr[this.selectedShip].moveRight();
+        // console.log(this.shipArr[this.selectedShip].canMove);
+        // if (!this.shipArr[this.selectedShip].canMove) {
+        //   this.shipArr[this.selectedShip].moveLeft();
+        //   this.shipArr[this.selectedShip].canMove = true;
+        //   console.log(this.shipArr[this.selectedShip].canMove);
+        // }
         break;
       case "ArrowLeft":
         this.shipArr[this.selectedShip].moveLeft();
+        // console.log(this.shipArr[this.selectedShip].canMove);
+        // if (!this.shipArr[this.selectedShip].canMove) {
+        //   this.shipArr[this.selectedShip].moveRight();
+        //   this.shipArr[this.selectedShip].canMove = true;
+        //   console.log(this.shipArr[this.selectedShip].canMove);
+        // }
         break;
       case "ArrowUp":
         this.shootCannonballs();
@@ -99,14 +111,8 @@ Game.prototype.startLoop = function() {
 
     // 2. move tentacles
     this.tentacleArr.forEach(function(element) {
-    //   var indexOfTentacle = this.tentacleArr.indexOf(element);
       if (element.y + element.height < this.canvas.height) {
-        // TEST FOR TENTACLE STOPPING WHEN HITTING THE BOTTOM
         element.move();
-        //   } else {
-        //       this.tentacleArr.splice(indexOfTentacle, 1)
-        //       this.stackedTentacleArr.push(this.tentacleArr[indexOfTentacle])
-        //       console.log(this.stackedTentacleArr)
       }
     }, this);
 
@@ -127,6 +133,12 @@ Game.prototype.startLoop = function() {
     this.calculateScore();
     this.scoreBoard.innerHTML = this.score;
 
+    // 7. gameover when stack happends
+    this.checkTentacleStack();
+
+    // 8. prevent ships from moving pass stacked tentacles
+    this.checkShipCollideTentacle();
+
     // CLEAR THE CANVAS
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -139,6 +151,11 @@ Game.prototype.startLoop = function() {
 
     // 2. draw tentacles
     this.tentacleArr.forEach(function(element) {
+      element.draw();
+    });
+
+    // 2.5 drawn stacked tentacles
+    this.stackedTentacleArr.forEach(function(element) {
       element.draw();
     });
 
@@ -173,24 +190,29 @@ Game.prototype.checkCannonballHit = function() {
   }, this);
 };
 
+// to stop the game if a moving tentacle collided with a stacked
 Game.prototype.checkTentacleStack = function() {
   this.stackedTentacleArr.forEach(function(stackedTentacle) {
+    // var stackedTentacle = stackedTentacleArr[x]
     this.tentacleArr.forEach(function(tentacle) {
+      // var tentacle = tentacleArr[x]
       if (tentacle.tentacleStack(stackedTentacle)) {
-        // TENTACLE COLLIDE WITH STACKED. TO BE ADDED
+        this.gameOver();
       }
-    });
-  });
+    }, this);
+  }, this);
 };
 
-// to add tentacles to the screen
+// to remove tentacles from the "moving" array and add them to the "stacked" array and start to form a stack.
 Game.prototype.checkTentacleReachBottom = function() {
   this.tentacleArr.forEach(function(tentacle) {
+      // var tentacle = tentacleArr[x]
     var indexOfTentacle = this.tentacleArr.indexOf(tentacle);
     if (tentacle.reachBottom(tentacle)) {
-      this.tentacleArr.splice(indexOfTentacle, 1);
       this.stackedTentacleArr.push(this.tentacleArr[indexOfTentacle]);
-      console.log(this.stackedTentacleArr);
+      this.tentacleArr.splice(indexOfTentacle, 1);
+      console.log("tentacleArr", this.tentacleArr);
+      console.log("stackedTentacleArr", this.stackedTentacleArr);
       // DISABLED WHILE STACK TEST IS ONGOING
       //   this.gameOver();
     }
@@ -218,7 +240,7 @@ Game.prototype.passGameOverCallback = function(gameOverFunc) {
 };
 
 Game.prototype.shootCannonballs = function() {
-  if (!this.shipArr[this.selectedShip].shootDelay) {
+  if (this.shipArr[this.selectedShip].canShoot) {
     // to determine which ship is shooting and its position
     var currentShipPositionX =
       this.shipArr[this.selectedShip].x +
@@ -235,15 +257,28 @@ Game.prototype.shootCannonballs = function() {
 
     // to add delay to the shoot that will be removed on a setTimeout
 
-    this.shipArr[this.selectedShip].shootDelay = true;
+    this.shipArr[this.selectedShip].canShoot = false;
 
     // setTimeout for the shoot delay
     var shipToAddDelay = this.selectedShip; // this variable is so the ship to add the delay doesn't change between the timout
     setTimeout(
       function() {
-        this.shipArr[shipToAddDelay].shootDelay = false;
+        this.shipArr[shipToAddDelay].canShoot = true;
       }.bind(this),
       2000
     );
   }
+};
+
+Game.prototype.checkShipCollideTentacle = function() {
+  this.stackedTentacleArr.forEach(function(stackedTentacle) {
+    // var stackedTentacle = stackedTentacleArr[x]
+    this.shipArr.forEach(function(ship) {
+      // var ship = shipArr[x]
+      if (ship.isShipCollidingWithTentacle(stackedTentacle)) {
+        ship.canMove = false;
+        console.log(ship.canMove);
+      }
+    }, this);
+  }, this);
 };

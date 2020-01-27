@@ -9,7 +9,8 @@ function Ship(canvas, yPosition) {
   this.x = 10;
   this.y = yPosition;
 
-  this.shootDelay = false; 
+  this.canShoot = true;
+  this.canMove = true;
 }
 
 // to add ship
@@ -22,18 +23,46 @@ Ship.prototype.draw = function(color) {
 
 // to move ship horizontally to the right
 Ship.prototype.moveRight = function() {
-  var shipRightBorder = this.x + this.size;
-  if (shipRightBorder < this.canvas.width - 14) {
+  var shipRight = this.x + this.size;
+  if (shipRight < this.canvas.width - 14) {
     this.x = this.x + 32;
   }
 };
 
 // to move ship horizontally to the left
 Ship.prototype.moveLeft = function() {
-  var shipLeftBorder = this.x;
-  if (shipLeftBorder > 14) {
+  var shipLeft = this.x;
+  if (shipLeft > 14) {
     this.x = this.x - 32;
   }
 };
 
+Ship.prototype.isShipCollidingWithTentacle = function(stackedTentacle) {
+  // WORKING ON THIS!!!*********************************************************************************
 
+  var shipLeft = this.x;
+  var shipRight = this.x + this.size;
+//   var shipTop = this.y;
+//   var shipBottom = this.y + this.size;
+
+  var stackedTentacleLeft = stackedTentacle.x;
+  var stackedTentacleRight = stackedTentacle.x + stackedTentacle.width;
+//   var stackedTentacleTop = stackedTentacle.y;
+//   var stackedTentacleBottom = stackedTentacle.y + stackedTentacle.height;
+
+  var crossRight =
+    shipLeft <= stackedTentacleRight && shipRight >= stackedTentacleLeft;
+  var crossLeft =
+    shipRight >= stackedTentacleLeft && shipLeft <= stackedTentacleRight;
+//   var crossTop =
+//     shipBottom >= stackedTentacleTop && shipTop <= stackedTentacleBottom;
+//   var crossBottom =
+//     shipBottom <= stackedTentacleBottom && shipBottom >= stackedTentacleTop;
+
+//   if ((crossLeft || crossRight) && (crossTop || crossBottom)) {
+    if (crossLeft || crossRight) {
+    return true;
+  }
+
+  return false;
+};
