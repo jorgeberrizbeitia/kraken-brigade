@@ -5,11 +5,12 @@ function Game() {
   this.canvas = null;
   this.ctx = null;
 
-  this.ship = null;
+  this.ship1 = null;
   this.ship2 = null;
   this.shipArr = [];
-  this.tentacleArr = [];
-  this.stackedTentacleArr = [];
+
+  this.tentacleArr = []; // tentacles moving down
+  this.stackedTentacleArr = []; // tentacles that are stacked at the bottom
   this.cannonballArr = [];
 
   this.selectedShip = 0; // current controlled ship
@@ -23,6 +24,7 @@ function Game() {
 
 // to start game
 Game.prototype.start = function() {
+
   // canvas creation
   this.canvasContainer = document.querySelector(".canvas-container");
   this.canvas = this.canvasContainer.querySelector("canvas");
@@ -37,8 +39,8 @@ Game.prototype.start = function() {
   this.canvas.setAttribute("height", containerHeight);
 
   // add initial ships and push into ship array
-  this.ship = new Ship(this.canvas, this.canvas.height - 50);
-  this.shipArr.push(this.ship);
+  this.ship1 = new Ship(this.canvas, this.canvas.height - 50);
+  this.shipArr.push(this.ship1);
   this.ship2 = new Ship(this.canvas, this.canvas.height - 110);
   this.shipArr.push(this.ship2);
 
@@ -49,32 +51,22 @@ Game.prototype.start = function() {
     } else {
       this.selectedShip = 1;
     }
-    console.log(this.selectedShip);
   };
 
   // keydown event listeners
   this.keyDownEvents = function(event) {
     switch (event.key) {
-      case "ArrowDown":
+      case "q":
         this.changeShip();
         break;
       case "ArrowRight":
-        this.shipArr[this.selectedShip].moveRight();
-        // console.log(this.shipArr[this.selectedShip].canMove);
-        // if (!this.shipArr[this.selectedShip].canMove) {
-        //   this.shipArr[this.selectedShip].moveLeft();
-        //   this.shipArr[this.selectedShip].canMove = true;
-        //   console.log(this.shipArr[this.selectedShip].canMove);
-        // }
+        this.shipArr[this.selectedShip].setDirection("right");
         break;
       case "ArrowLeft":
-        this.shipArr[this.selectedShip].moveLeft();
-        // console.log(this.shipArr[this.selectedShip].canMove);
-        // if (!this.shipArr[this.selectedShip].canMove) {
-        //   this.shipArr[this.selectedShip].moveRight();
-        //   this.shipArr[this.selectedShip].canMove = true;
-        //   console.log(this.shipArr[this.selectedShip].canMove);
-        // }
+        this.shipArr[this.selectedShip].setDirection("left");
+        break;
+      case "ArrowDown":
+        this.shipArr[this.selectedShip].setDirection("stop");
         break;
       case "ArrowUp":
         this.shootCannonballs();
@@ -90,6 +82,7 @@ Game.prototype.start = function() {
 // GAME LOOP
 Game.prototype.startLoop = function() {
   var loop = function() {
+
     // 1. create tentacles randomly
     if (Math.random() > 0.99) {
       // determine random position
@@ -109,35 +102,49 @@ Game.prototype.startLoop = function() {
       this.tentacleArr.push(newTentacle);
     }
 
-    // 2. move tentacles
+    // 2. call for automatic tentacle movement
     this.tentacleArr.forEach(function(element) {
       if (element.y + element.height < this.canvas.height) {
         element.move();
       }
     }, this);
 
-    // 3. move cannonballs
+    // 3. check if tentacles collided with (bottom - ship size)
+    this.checkTentacleReachBottom();
+
+    // 4. call automatic ship direction change based on screen collision
+    this.shipArr.forEach(function(ship) {
+      ship.handleScreenCollision();
+    });
+    
+    
+    // 5. call automatic ship #1 direction change based on stacked tentacle collision
+    if (this.stackedTentacleArr.length > 0) {
+        this.stackedTentacleArr.forEach(function(stackedTentacle) {
+            this.handleTentacleCollision(stackedTentacle);
+        }, this);
+    }
+    
+    // 6. call for automatic ship movement
+    this.ship1.updatePosition();
+    this.ship2.updatePosition();
+
+    // 7. call for automatic cannonballs movement
     this.cannonballArr.forEach(function(element) {
       element.move();
     });
 
-    // 4. check if cannonballs collided with enemies
+    // 8. call to check if cannonballs collided with tentacles
     if (this.cannonballArr.length > 0 && this.tentacleArr.length > 0) {
       this.checkCannonballHit();
     }
 
-    // 5. check if tentacles collided with (bottom - ship size)
-    this.checkTentacleReachBottom();
-
-    // 6. calculate score
+    // 9. call to calculate score and insert on DOM
     this.calculateScore();
     this.scoreBoard.innerHTML = this.score;
 
-    // 7. gameover when stack happends
+    // 10. call gameover when 2nd tentacle stack happends
     this.checkTentacleStack();
-
-    // 8. prevent ships from moving pass stacked tentacles
-    this.checkShipCollideTentacle();
 
     // CLEAR THE CANVAS
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -147,19 +154,18 @@ Game.prototype.startLoop = function() {
     this.shipArr.forEach(function(element) {
       element.draw("black");
     });
-    // this.ship.draw();
 
-    // 2. draw tentacles
+    // 2. draw moving tentacles
     this.tentacleArr.forEach(function(element) {
       element.draw();
     });
 
-    // 2.5 drawn stacked tentacles
+    // 3. draw stacked tentacles
     this.stackedTentacleArr.forEach(function(element) {
       element.draw();
     });
 
-    // 3. draw cannonballs
+    // 4. draw cannonballs
     this.cannonballArr.forEach(function(element) {
       element.draw();
     });
@@ -197,7 +203,7 @@ Game.prototype.checkTentacleStack = function() {
     this.tentacleArr.forEach(function(tentacle) {
       // var tentacle = tentacleArr[x]
       if (tentacle.tentacleStack(stackedTentacle)) {
-        this.gameOver();
+        // this.gameOver();
       }
     }, this);
   }, this);
@@ -206,13 +212,13 @@ Game.prototype.checkTentacleStack = function() {
 // to remove tentacles from the "moving" array and add them to the "stacked" array and start to form a stack.
 Game.prototype.checkTentacleReachBottom = function() {
   this.tentacleArr.forEach(function(tentacle) {
-      // var tentacle = tentacleArr[x]
+    // var tentacle = tentacleArr[x]
     var indexOfTentacle = this.tentacleArr.indexOf(tentacle);
     if (tentacle.reachBottom(tentacle)) {
       this.stackedTentacleArr.push(this.tentacleArr[indexOfTentacle]);
       this.tentacleArr.splice(indexOfTentacle, 1);
-      console.log("tentacleArr", this.tentacleArr);
-      console.log("stackedTentacleArr", this.stackedTentacleArr);
+      //   console.log("tentacleArr", this.tentacleArr);
+      //   console.log("stackedTentacleArr", this.stackedTentacleArr);
       // DISABLED WHILE STACK TEST IS ONGOING
       //   this.gameOver();
     }
@@ -239,6 +245,7 @@ Game.prototype.passGameOverCallback = function(gameOverFunc) {
   this.startOver = gameOverFunc;
 };
 
+// to shoot cannonballs!
 Game.prototype.shootCannonballs = function() {
   if (this.shipArr[this.selectedShip].canShoot) {
     // to determine which ship is shooting and its position
@@ -270,15 +277,24 @@ Game.prototype.shootCannonballs = function() {
   }
 };
 
-Game.prototype.checkShipCollideTentacle = function() {
-  this.stackedTentacleArr.forEach(function(stackedTentacle) {
-    // var stackedTentacle = stackedTentacleArr[x]
-    this.shipArr.forEach(function(ship) {
-      // var ship = shipArr[x]
-      if (ship.isShipCollidingWithTentacle(stackedTentacle)) {
-        ship.canMove = false;
-        console.log(ship.canMove);
-      }
-    }, this);
-  }, this);
+// automatic ship direction change based on stacked tentacle collision
+Game.prototype.handleTentacleCollision = function(stackedTentacle) {
+  // variables for easier reading
+  var shipRight = this.ship1.x + this.ship1.size;
+  var shipLeft = this.ship1.x;
+  var stackedTentacleRight = stackedTentacle.x + stackedTentacle.width;
+  var stackedTentacleLeft = stackedTentacle.x;
+
+  // checks in variables for easier reading
+  var crossTentacleFromLeft =
+    shipRight > stackedTentacleLeft && shipRight < stackedTentacleRight;
+  var crossTentacleFromRight =
+    shipLeft < stackedTentacleRight && shipLeft > stackedTentacleLeft;
+
+  // collision check
+  if (crossTentacleFromLeft) {
+    this.ship1.direction = this.ship1.direction * -1;
+  } else if (crossTentacleFromRight) {
+    this.ship1.direction = this.ship1.direction * -1;
+  }
 };

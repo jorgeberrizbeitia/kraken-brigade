@@ -11,7 +11,7 @@ function Cannonball(canvas, shipPositionX, shipPositionY) {
   this.speed = 5;
 }
 
-// to add cannonballs when ship shoots
+// cannonball draw when keydown is pressed
 Cannonball.prototype.draw = function() {
   this.ctx.fillStyle = "blue";
 
@@ -19,23 +19,26 @@ Cannonball.prototype.draw = function() {
   this.ctx.fillRect(this.x, this.y, this.size, this.size);
 };
 
-// to move cannonballs up
+// cannonball automatic movement
 Cannonball.prototype.move = function() {
   this.y = this.y - this.speed;
 };
 
 // to check collision between a cannonball and a tentacle
 Cannonball.prototype.cannonballHit = function(tentacle) {
+  // variables for easier reading
   var cannonballLeft = this.x;
   var cannonballRight = this.x + this.size;
   var cannonballTop = this.y;
   var cannonballBottom = this.y + this.size;
 
+  // variables for easier reading
   var tentacleLeft = tentacle.x;
   var tentacleRight = tentacle.x + tentacle.width;
   var tentacleTop = tentacle.y;
   var tentacleBottom = tentacle.y + tentacle.height;
 
+  // checks in variables for easier reading
   var crossRight =
     tentacleLeft <= cannonballRight && tentacleRight >= cannonballLeft;
   var crossLeft =
@@ -45,6 +48,7 @@ Cannonball.prototype.cannonballHit = function(tentacle) {
   var crossBottom =
     tentacleBottom <= cannonballBottom && tentacleBottom >= cannonballTop;
 
+  // collision check
   if ((crossLeft || crossRight) && (crossTop || crossBottom)) {
     return true;
   }

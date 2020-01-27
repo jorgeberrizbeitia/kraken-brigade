@@ -6,8 +6,12 @@ function Ship(canvas, yPosition) {
   this.ctx = canvas.getContext("2d");
 
   this.size = 50;
+
   this.x = 10;
   this.y = yPosition;
+
+  this.direction = 0;
+  this.speed = 5;
 
   this.canShoot = true;
   this.canMove = true;
@@ -21,48 +25,27 @@ Ship.prototype.draw = function(color) {
   this.ctx.fillRect(this.x, this.y, this.size, this.size);
 };
 
-// to move ship horizontally to the right
-Ship.prototype.moveRight = function() {
-  var shipRight = this.x + this.size;
-  if (shipRight < this.canvas.width - 14) {
-    this.x = this.x + 32;
-  }
+// to change direction based on keydown
+Ship.prototype.setDirection = function(direction) {
+  // +1 down  -1 up
+  if (direction === "left") this.direction = -1;
+  else if (direction === "right") this.direction = 1;
+  else if (direction === "stop") this.direction = 0;
 };
 
-// to move ship horizontally to the left
-Ship.prototype.moveLeft = function() {
-  var shipLeft = this.x;
-  if (shipLeft > 14) {
-    this.x = this.x - 32;
-  }
+// automatic movement inside game loop
+Ship.prototype.updatePosition = function() {
+  this.x = this.x + this.direction * this.speed; //  + 5   - 5
 };
 
-Ship.prototype.isShipCollidingWithTentacle = function(stackedTentacle) {
-  // WORKING ON THIS!!!*********************************************************************************
+// automatic direction change based on screen collision
+Ship.prototype.handleScreenCollision = function() {
+  var screenLeft = 0;
+  var screenRight = this.canvas.width;
 
-  var shipLeft = this.x;
-  var shipRight = this.x + this.size;
-//   var shipTop = this.y;
-//   var shipBottom = this.y + this.size;
-
-  var stackedTentacleLeft = stackedTentacle.x;
-  var stackedTentacleRight = stackedTentacle.x + stackedTentacle.width;
-//   var stackedTentacleTop = stackedTentacle.y;
-//   var stackedTentacleBottom = stackedTentacle.y + stackedTentacle.height;
-
-  var crossRight =
-    shipLeft <= stackedTentacleRight && shipRight >= stackedTentacleLeft;
-  var crossLeft =
-    shipRight >= stackedTentacleLeft && shipLeft <= stackedTentacleRight;
-//   var crossTop =
-//     shipBottom >= stackedTentacleTop && shipTop <= stackedTentacleBottom;
-//   var crossBottom =
-//     shipBottom <= stackedTentacleBottom && shipBottom >= stackedTentacleTop;
-
-//   if ((crossLeft || crossRight) && (crossTop || crossBottom)) {
-    if (crossLeft || crossRight) {
-    return true;
+  if (this.x + this.size > screenRight) {
+    this.direction = -1;
+  } else if (this.x < screenLeft) {
+    this.direction = 1;
   }
-
-  return false;
 };
