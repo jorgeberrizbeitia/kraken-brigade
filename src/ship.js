@@ -8,11 +8,13 @@ function Ship(canvas, yPosition) {
   this.size = 50;
   this.x = 10;
   this.y = yPosition;
+
+  this.shootDelay = false; 
 }
 
 // to add ship
-Ship.prototype.draw = function() {
-  this.ctx.fillStyle = "black";
+Ship.prototype.draw = function(color) {
+  this.ctx.fillStyle = color;
 
   // fillRect(x, y, width, height)
   this.ctx.fillRect(this.x, this.y, this.size, this.size);

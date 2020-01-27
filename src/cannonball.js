@@ -26,20 +26,20 @@ Cannonball.prototype.move = function() {
 
 // to check collision between a cannonball and a tentacle
 Cannonball.prototype.cannonballHit = function(tentacle) {
-  var shipLeft = this.x;
-  var shipRight = this.x + this.size;
-  var shipTop = this.y;
-  var shipBottom = this.y + this.size;
+  var cannonballLeft = this.x;
+  var cannonballRight = this.x + this.size;
+  var cannonballTop = this.y;
+  var cannonballBottom = this.y + this.size;
 
   var tentacleLeft = tentacle.x;
-  var tentacleRight = tentacle.x + tentacle.size;
+  var tentacleRight = tentacle.x + tentacle.width;
   var tentacleTop = tentacle.y;
-  var tentacleBottom = tentacle.y + tentacle.size;
+  var tentacleBottom = tentacle.y + tentacle.height;
 
-  var crossRight = tentacleLeft <= shipRight && tentacleRight >= shipLeft;
-  var crossLeft = tentacleRight >= shipLeft && tentacleLeft <= shipRight;
-  var crossTop = tentacleBottom >= shipTop && tentacleTop <= shipBottom;
-  var crossBottom = tentacleBottom <= shipBottom && tentacleBottom >= shipTop;
+  var crossRight = tentacleLeft <= cannonballRight && tentacleRight >= cannonballLeft;
+  var crossLeft = tentacleRight >= cannonballLeft && tentacleLeft <= cannonballRight;
+  var crossTop = tentacleBottom >= cannonballTop && tentacleTop <= cannonballBottom;
+  var crossBottom = tentacleBottom <= cannonballBottom && tentacleBottom >= cannonballTop;
 
   if ((crossLeft || crossRight) && (crossTop || crossBottom)) {
     return true;
