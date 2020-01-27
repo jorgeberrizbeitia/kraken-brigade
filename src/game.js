@@ -99,9 +99,14 @@ Game.prototype.startLoop = function() {
 
     // 2. move tentacles
     this.tentacleArr.forEach(function(element) {
-      if (element.y + element.height + 10 < this.canvas.height) {
+    //   var indexOfTentacle = this.tentacleArr.indexOf(element);
+      if (element.y + element.height < this.canvas.height) {
         // TEST FOR TENTACLE STOPPING WHEN HITTING THE BOTTOM
         element.move();
+        //   } else {
+        //       this.tentacleArr.splice(indexOfTentacle, 1)
+        //       this.stackedTentacleArr.push(this.tentacleArr[indexOfTentacle])
+        //       console.log(this.stackedTentacleArr)
       }
     }, this);
 
@@ -181,8 +186,13 @@ Game.prototype.checkTentacleStack = function() {
 // to add tentacles to the screen
 Game.prototype.checkTentacleReachBottom = function() {
   this.tentacleArr.forEach(function(tentacle) {
+    var indexOfTentacle = this.tentacleArr.indexOf(tentacle);
     if (tentacle.reachBottom(tentacle)) {
-      this.gameOver();
+      this.tentacleArr.splice(indexOfTentacle, 1);
+      this.stackedTentacleArr.push(this.tentacleArr[indexOfTentacle]);
+      console.log(this.stackedTentacleArr);
+      // DISABLED WHILE STACK TEST IS ONGOING
+      //   this.gameOver();
     }
   }, this);
 };

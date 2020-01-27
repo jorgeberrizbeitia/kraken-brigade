@@ -4,19 +4,19 @@ function Tentacle(canvas, x) {
   this.canvas = canvas;
   this.ctx = this.canvas.getContext("2d");
 
-  this.height = 30;
-  this.width = 50;
+  this.height = 50;
+  this.width = 30;
   this.x = x;
   this.y = 0;
-  this.speed = 1;
+  this.speed = 5;
 }
 
 // to add tentacles
 Tentacle.prototype.draw = function() {
   this.ctx.fillStyle = "green";
 
-  // fillRect(x, y, height, width)
-  this.ctx.fillRect(this.x, this.y, this.height, this.width);
+  // fillRect(x, y,width, height)
+  this.ctx.fillRect(this.x, this.y, this.width, this.height);
 };
 
 // to set automatic tentacle movement
@@ -27,7 +27,7 @@ Tentacle.prototype.move = function() {
 // to check if tentacles reached the bottom of the screen
 Tentacle.prototype.reachBottom = function (tentacle) {
     var tentacleBottom = tentacle.y + tentacle.height;
-    var bottomOfScreen = this.canvas.height - 50
+    var bottomOfScreen = this.canvas.height
 
     // below is a check to not consider tentacles destroyed by cannonballs which are sent below this point
     var passBottomOfScreen = this.canvas.height + tentacle.height
