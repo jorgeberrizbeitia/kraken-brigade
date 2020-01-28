@@ -6,10 +6,10 @@ function Tentacle(canvas, x) {
   this.ctx = this.canvas.getContext("2d");
 
   this.height = 50;
-  this.width = 25;
+  this.width = 30;
   this.x = x;
   this.y = 0;
-  this.speed = 3;
+  this.speed = 1;
 
   this.tentacleImage = new Image();
   this.tentacleImage.src = './img/tentacle.png'

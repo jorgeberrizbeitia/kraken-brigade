@@ -27,12 +27,12 @@ function main() {
                     <h1>Kraken Brigade</h1>
                 </div>
                 <div class ="splash" id="instructions-box">
-                    <h2>Instructions...</h2>
+                    <h2>Instructions!</h2>
                     <p>
-                    "Arrow Left" -> Move Ship Left<br>
-                    "Arrow Right" -> Move Ship Right<br>
-                    "Arrow Up" -> Shoot Those Darn Tentacles!<br>
-                    "Q" -> Toogle Between Ships<br>
+                    Arrow Left -> Move Ship Left<br>
+                    Arrow Right -> Move Ship Right<br>
+                    Arrow Up -> Shoot Those Darn Tentacles!<br>
+                    Q -> Toogle Between Ships<br>
                     </p>
                 </div>
                 <div class ="splash" id="start-btn-box">

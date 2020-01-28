@@ -41,21 +41,18 @@ body {
 
 #title-box {
   text-align: center;
-  background-color: green;
   margin: 50px auto 50px auto;
   padding: 20px;
 }
 
 #instructions-box {
   text-align: center;
-  background-color: blue;
   margin: 50px auto 50px auto;
   padding: 20px;
 }
 
 #start-btn-box {
   text-align: center;
-  background-color: red;
   margin: 50px auto 50px auto;
   padding: 20px;
 }

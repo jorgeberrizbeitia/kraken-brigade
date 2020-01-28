@@ -5,28 +5,43 @@ function Ship(canvas, yPosition) {
   this.canvas = canvas;
   this.ctx = canvas.getContext("2d");
 
-  this.size = 50;
+  this.width = 80;
+  this.heigth = 50;
 
   this.x = 10;
   this.y = yPosition;
 
   this.direction = 0;
-  this.speed = 5;
+  this.speed = 3;
 
   this.canShoot = true;
   this.canMove = true;
+  // diferent types of ship images
+  this.imageRightGreen = "./img/ship-right-canshoot.png";
+  this.imageLeftGreen = "./img/ship-left-canshoot.png";
+  this.imageRightRed = "./img/ship-right-cantshoot.png";
+  this.imageLeftRed = "./img/ship-left-cantshoot.png";
 
   this.shipImage = new Image();
-  this.shipImage.src = './img/ship-right-canshoot.png'
+  this.shipImage.src = this.imageRightGreen;
 }
 
 // to add ship
-Ship.prototype.draw = function(color) {
-//   this.ctx.fillStyle = color;
+Ship.prototype.draw = function(shipImage) {
+  //   this.ctx.fillStyle = color;
 
   // fillRect(x, y, width, height)
-  this.ctx.drawImage(this.shipImage, this.x, this.y, this.size, this.size)
-//   this.ctx.fillRect(this.x, this.y, this.size, this.size);
+  //   this.ctx.fillRect(this.x, this.y, this.width, this.heigth);
+  if (this.direction < 0 && this.canShoot === true) {
+    this.shipImage.src = this.imageLeftGreen
+  } else if (this.direction < 0 && this.canShoot === false) {
+    this.shipImage.src = this.imageLeftRed
+  } else if (this.direction >= 0 && this.canShoot === true) {
+    this.shipImage.src = this.imageRightGreen
+  } else if (this.direction >= 0 && this.canShoot === false) {
+    this.shipImage.src = this.imageRightRed
+}
+    this.ctx.drawImage(this.shipImage, this.x, this.y, this.width, this.heigth);
 };
 
 // to change direction based on keydown
@@ -47,7 +62,7 @@ Ship.prototype.handleScreenCollision = function() {
   var screenLeft = 0;
   var screenRight = this.canvas.width;
 
-  if (this.x + this.size > screenRight) {
+  if (this.x + this.width > screenRight) {
     this.direction = -1;
   } else if (this.x < screenLeft) {
     this.direction = 1;

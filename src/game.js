@@ -23,7 +23,7 @@ function Game() {
   this.gameScreen = null;
 
   this.background = new Image();
-  this.background.src = './img/sea-background3.jpg'
+  this.background.src = './img/sea-background4.jpg'
 }
 
 // to start game
@@ -32,8 +32,6 @@ Game.prototype.start = function() {
   this.canvasContainer = document.querySelector(".canvas-container");
   this.canvas = this.canvasContainer.querySelector("canvas");
   this.ctx = this.canvas.getContext("2d");
-
-  
 
   var containerWidth = this.canvasContainer.offsetWidth;
   var containerHeight = this.canvasContainer.offsetHeight;
@@ -92,15 +90,15 @@ Game.prototype.start = function() {
 Game.prototype.startLoop = function() {
   var loop = function() {
     // 1. create tentacles randomly
-    if (Math.random() > 0.99) {
+    if (Math.random() > 0.991) {
       // determine random position
       var randomPosition = 0;
       var randomCalc = this.canvas.width * Math.random();
 
-      if (randomCalc < 10) {
+      if (randomCalc < 20) {
         randomPosition = 10;
       } else if (randomCalc > this.canvas.width - 50) {
-        randomPosition = this.canvas.width - 50;
+        randomPosition = this.canvas.width - 60;
       } else {
         randomPosition = randomCalc;
       }
@@ -275,7 +273,7 @@ Game.prototype.shootCannonballs = function() {
     // to determine which ship is shooting and its position
     var currentShipPositionX =
       this.shipArr[this.selectedShip].x +
-      this.shipArr[this.selectedShip].size / 4;
+      this.shipArr[this.selectedShip].width / 4;
     var currentShipPositionY = this.shipArr[this.selectedShip].y;
 
     // to create new cannonball and push into cannonballs array
@@ -305,7 +303,7 @@ Game.prototype.shootCannonballs = function() {
 Game.prototype.handleTentacleCollision = function(ship, stackedTentacle) {
   // variables for easier reading
   var shipTop = ship.y;
-  var shipRight = ship.x + ship.size;
+  var shipRight = ship.x + ship.width;
   var shipLeft = ship.x;
 
   var stackedTentacleLeft = stackedTentacle.x;
