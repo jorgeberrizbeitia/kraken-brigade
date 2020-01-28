@@ -11,9 +11,6 @@ function buildDom(htmlString) {
 
 // main game function for page load
 function main() {
-    
-    document.body.style.backgroundImage = "url('img_tree.png')";
-
   var game;
   var splashScreen;
   var gameOverScreen;
@@ -22,11 +19,11 @@ function main() {
   function createSplashScreen() {
     splashScreen = buildDom(`
         <main>
-            <div class ="splash" id="splash-container">
-                <div class ="splash" id="title-box">
+            <div class="container">
+                <div id="title-box">
                     <h1>Kraken Brigade</h1>
                 </div>
-                <div class ="splash" id="instructions-box">
+                <div id="instructions-box">
                     <h2>Instructions!</h2>
                     <p>
                     Arrow Left -> Move Ship Left<br>
@@ -35,11 +32,12 @@ function main() {
                     Q -> Toogle Between Ships<br>
                     </p>
                 </div>
-                <div class ="splash" id="start-btn-box">
-                    <button class ="splash" id="start-btn">Start</button>
+                <div>
+                    <button id="start-btn" class ="button">START!</button>
                 </div>
             </div>
         </main>`);
+        
 
     document.body.appendChild(splashScreen);
 
@@ -57,12 +55,8 @@ function main() {
   // SETTING GAME SCREEN
   function createGameScreen() {
     var gameScreen = buildDom(`
-    <main class="game container">
+    <main class="game game-container">
     <header>
-      <div class="ships">
-        <span class="label">Ships:</span>
-        <span class="value"></span>
-      </div>
       <div class="score">
         <span class="label">Score:</span>
         <span class="value"></span>
@@ -89,11 +83,15 @@ function main() {
   function createGameOverScreen(score) {
     gameOverScreen = buildDom(`
     <main>
-        <h1>YARR!!</h1>
-        <div id="score">
-            <h2>your score is... ${score}</h2>
+        <div class="container">
+            <div>
+                <h1>YARR!!</h1>
+            </div>
+            <div id="score">
+                <h2>your score is... ${score}</h2>
+            </div>
+            <button id="restart-btn" class="button" >RESTART!</button>
         </div>
-        <button id="restart-btn">Restart</button>
     </main>`);
 
     document.body.appendChild(gameOverScreen);
