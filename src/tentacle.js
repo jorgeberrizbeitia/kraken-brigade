@@ -49,7 +49,7 @@ Tentacle.prototype.tentacleStack = function(stackedTentacle) {
   var tentacleLeft = this.x;
   var tentacleRight = this.x + this.width;
   var tentacleTop = this.y;
-  var tentacleBottom = this.y + this.height;
+  var tentacleBottom = this.y + this.height + 10;
 
   // variables for easier reading
   var stackedTentacleLeft = stackedTentacle.x;
