@@ -11,6 +11,9 @@ function buildDom(htmlString) {
 
 // main game function for page load
 function main() {
+    
+    document.body.style.backgroundImage = "url('img_tree.png')";
+
   var game;
   var splashScreen;
   var gameOverScreen;
@@ -19,11 +22,23 @@ function main() {
   function createSplashScreen() {
     splashScreen = buildDom(`
         <main>
-            <h1>Kraken Brigade</h1>
-            <div id="instructions">
-                <h2>Instructions...</h2>
+            <div class ="splash" id="splash-container">
+                <div class ="splash" id="title-box">
+                    <h1>Kraken Brigade</h1>
+                </div>
+                <div class ="splash" id="instructions-box">
+                    <h2>Instructions...</h2>
+                    <p>
+                    "Arrow Left" -> Move Ship Left<br>
+                    "Arrow Right" -> Move Ship Right<br>
+                    "Arrow Up" -> Shoot Those Darn Tentacles!<br>
+                    "Q" -> Toogle Between Ships<br>
+                    </p>
+                </div>
+                <div class ="splash" id="start-btn-box">
+                    <button class ="splash" id="start-btn">Start</button>
+                </div>
             </div>
-            <button id="start-btn">Start</button>
         </main>`);
 
     document.body.appendChild(splashScreen);
@@ -85,7 +100,7 @@ function main() {
 
     var button = gameOverScreen.querySelector("button");
 
-    button.addEventListener('click', startGame);
+    button.addEventListener("click", startGame);
   }
 
   function removeGameOverScreen() {

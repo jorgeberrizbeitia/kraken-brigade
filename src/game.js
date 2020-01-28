@@ -21,6 +21,9 @@ function Game() {
 
   this.gameIsOver = false;
   this.gameScreen = null;
+
+  this.background = new Image();
+  this.background.src = './img/sea-background3.jpg'
 }
 
 // to start game
@@ -29,6 +32,8 @@ Game.prototype.start = function() {
   this.canvasContainer = document.querySelector(".canvas-container");
   this.canvas = this.canvasContainer.querySelector("canvas");
   this.ctx = this.canvas.getContext("2d");
+
+  
 
   var containerWidth = this.canvasContainer.offsetWidth;
   var containerHeight = this.canvasContainer.offsetHeight;
@@ -114,32 +119,32 @@ Game.prototype.startLoop = function() {
 
     // 3. check if tentacles collided with bottom. they stop and create a stack.
     this.checkTentacleReachBottom();
-
+    
     // 4. to keep stacking tentacles on each other
     this.checkTentacleStack();
-
+    
     // 5. call automatic ship direction change based on screen collision
     this.shipArr.forEach(function(ship) {
-      ship.handleScreenCollision();
+        ship.handleScreenCollision();
     });
-
+    
     // 6. call automatic ship direction change based on stacked tentacle collision.
     if (this.stackedTentacleArr.length > 0) {
-      this.shipArr.forEach(function(ship) {
-        this.stackedTentacleArr.forEach(function(stackedTentacle) {
-          this.handleTentacleCollision(ship, stackedTentacle);
+        this.shipArr.forEach(function(ship) {
+            this.stackedTentacleArr.forEach(function(stackedTentacle) {
+                this.handleTentacleCollision(ship, stackedTentacle);
+            }, this);
         }, this);
-      }, this);
     }
-
+    
     // 7. call for automatic ship movement
     this.ship1.updatePosition();
     this.ship2.updatePosition();
     this.ship3.updatePosition();
-
+    
     // 8. call for automatic cannonballs movement
     this.cannonballArr.forEach(function(element) {
-      element.move();
+        element.move();
     });
 
     // 9. call to check if cannonballs collided with tentacles
@@ -162,11 +167,11 @@ Game.prototype.startLoop = function() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
     // UPDATE THE CANVAS
-    // 1. draw the ship                                   WORKING HERE ***********************       
-    // this.shipArr.forEach(function(element) {
-    //   element.draw("black");
-    // });
 
+    // 0. draw background
+    this.ctx.drawImage(this.background,0,0, this.canvas.width, this.canvas.height)
+
+    // 1. draw the ship  
     this.shipArr.forEach(function(element) {
       if ((element.canShoot === true)) {
         element.draw("black");
@@ -240,8 +245,6 @@ Game.prototype.checkTentacleReachBottom = function() {
     if (tentacle.reachBottom(tentacle)) {
       this.stackedTentacleArr.push(this.tentacleArr[indexOfTentacle]);
       this.tentacleArr.splice(indexOfTentacle, 1);
-      // DISABLED WHILE STACK TEST IS ONGOING
-      //   this.gameOver();
     }
   }, this);
 };
@@ -316,7 +319,10 @@ Game.prototype.handleTentacleCollision = function(ship, stackedTentacle) {
     shipLeft < stackedTentacleRight && shipLeft > stackedTentacleLeft;
 
   // below 'if' is to check stacked tentacles only for the the height each ship is moving in
-  if (shipTop === stackedTentacleTop) {
+  // +/- 30 is to consider small discrepancies in the heigth
+  if (shipTop < (stackedTentacleTop + 30) && (shipTop > stackedTentacleTop -30)) {
+    // if (shipTop === stackedTentacleTop) {
+
     // collision check
     if (crossTentacleFromLeft) {
       ship.direction = ship.direction * -1;

@@ -10,14 +10,19 @@ function Tentacle(canvas, x) {
   this.x = x;
   this.y = 0;
   this.speed = 3;
+
+  this.tentacleImage = new Image();
+  this.tentacleImage.src = './img/tentacle.png'
 }
 
 // tentacle draw
 Tentacle.prototype.draw = function() {
-  this.ctx.fillStyle = "green";
+//   this.ctx.fillStyle = "green";
 
   // fillRect(x, y,width, height)
-  this.ctx.fillRect(this.x, this.y, this.width, this.height);
+  this.ctx.drawImage(this.tentacleImage, this.x, this.y, this.width, this.height)
+
+//   this.ctx.fillRect(this.x, this.y, this.width, this.height);
 };
 
 // tentacle automatic movement

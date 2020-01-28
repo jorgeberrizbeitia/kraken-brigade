@@ -15,14 +15,18 @@ function Ship(canvas, yPosition) {
 
   this.canShoot = true;
   this.canMove = true;
+
+  this.shipImage = new Image();
+  this.shipImage.src = './img/ship-right-canshoot.png'
 }
 
 // to add ship
 Ship.prototype.draw = function(color) {
-  this.ctx.fillStyle = color;
+//   this.ctx.fillStyle = color;
 
   // fillRect(x, y, width, height)
-  this.ctx.fillRect(this.x, this.y, this.size, this.size);
+  this.ctx.drawImage(this.shipImage, this.x, this.y, this.size, this.size)
+//   this.ctx.fillRect(this.x, this.y, this.size, this.size);
 };
 
 // to change direction based on keydown
