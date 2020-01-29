@@ -56,16 +56,20 @@ function main() {
   function createGameScreen() {
     var gameScreen = buildDom(`
     <main class="game game-container">
-    <header>
-      <div class="score">
-        <span class="label">Score:</span>
-        <span class="value"></span>
+      <header>
+        <div class="kill-score score">
+          <span class="label">Kill Score:</span>
+          <span class="value"></span>
+        </div>
+        <div class="time-score score">
+          <span class="label">Time Score:</span>
+          <span class="value"></span>
+        </div>
+      </header>
+      <div class="canvas-container">
+        <canvas></canvas>
       </div>
-    </header>
-    <div class="canvas-container">
-      <canvas></canvas>
-    </div>
-  </main>
+    </main>
     `);
 
     document.body.appendChild(gameScreen);

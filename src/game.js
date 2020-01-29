@@ -17,13 +17,21 @@ function Game() {
   this.selectedShip = 0; // current controlled ship
 
   this.scoreBoard = 0;
-  this.score = 0;
+  this.timeScore = 0;
+  this.killScore = 0;
+  this.totalScore = 0;
+
+  this.loopCount = 0;
+  this.spawnCheck = 0; // to check the chances of enemies appearing
+  this.tentacleSpeed = 1; // tentacle speed that changes with dificulty
 
   this.gameIsOver = false;
   this.gameScreen = null;
 
   this.background = new Image();
   this.background.src = "./img/game-background.png";
+
+  this.currentShipLine = null; // line that shows current controlled ship *QoL*
 }
 
 // to start game
@@ -36,17 +44,18 @@ Game.prototype.start = function() {
   var containerWidth = this.canvasContainer.offsetWidth;
   var containerHeight = this.canvasContainer.offsetHeight;
 
-  this.scoreBoard = this.gameScreen.querySelector(".score .value");
+  this.timeScoreBoard = this.gameScreen.querySelector(".time-score .value");
+  this.killScoreBoard = this.gameScreen.querySelector(".kill-score .value");
 
   this.canvas.setAttribute("width", containerWidth);
   this.canvas.setAttribute("height", containerHeight);
 
   // add initial ships and push into ship array
-  this.ship1 = new Ship(this.canvas, this.canvas.height - 50);
+  this.ship1 = new Ship(this.canvas, this.canvas.height - 100);
   this.shipArr.push(this.ship1);
-  this.ship2 = new Ship(this.canvas, this.canvas.height - 110);
+  this.ship2 = new Ship(this.canvas, this.canvas.height - 160);
   this.shipArr.push(this.ship2);
-  this.ship3 = new Ship(this.canvas, this.canvas.height - 170);
+  this.ship3 = new Ship(this.canvas, this.canvas.height - 220);
   this.shipArr.push(this.ship3);
 
   // to change ship to control
@@ -89,8 +98,27 @@ Game.prototype.start = function() {
 // GAME LOOP
 Game.prototype.startLoop = function() {
   var loop = function() {
+    //  increasing dificulty formula that affects speed and # of tentacles.
+    if (this.totalScore < 80) {
+      this.spawnCheck = 0.996;
+      this.tentacleSpeed = 1
+      console.log("easy")
+    } else if (this.totalScore > 80 && this.totalScore < 160) {
+      this.spawnCheck = 0.992;
+      this.tentacleSpeed = 1
+      console.log("normal")
+    } else if (this.totalScore > 160 && this.totalScore < 240) {
+      this.spawnCheck = 0.988;
+      this.tentacleSpeed = 1.5
+      console.log("hard")
+    } else if (this.totalScore > 240) {
+      this.spawnCheck = 0.984;
+      this.tentacleSpeed = 1.5
+      console.log("HARDEST")
+    }
+
     // 1. create tentacles randomly
-    if (Math.random() > 0.9999) { // previous 0,991
+    if (Math.random() > this.spawnCheck) {
       // determine random position
       var randomPosition = 0;
       var randomCalc = this.canvas.width * Math.random();
@@ -104,7 +132,7 @@ Game.prototype.startLoop = function() {
       }
 
       // to create new tentacle and add to their array
-      var newTentacle = new Tentacle(this.canvas, randomPosition);
+      var newTentacle = new Tentacle(this.canvas, randomPosition, this.tentacleSpeed);
       this.tentacleArr.push(newTentacle);
     }
 
@@ -116,7 +144,7 @@ Game.prototype.startLoop = function() {
     }, this);
 
     // 3. check if tentacles collided with bottom. they stop and create a stack.
-    this.checkTentacleReachBottom();
+    this.tentacleReachFort();
 
     // 4. to keep stacking tentacles on each other
     this.checkTentacleStack();
@@ -152,11 +180,17 @@ Game.prototype.startLoop = function() {
 
     // 10. call to calculate score and insert on DOM
     this.calculateScore();
-    this.scoreBoard.innerHTML = this.score;
+    this.timeScoreBoard.innerHTML = this.timeScore;
+    this.killScoreBoard.innerHTML = this.killScore;
+    this.totalScore = this.timeScore + this.killScore;
 
     // 11. to end game when 4th stack of tentacles is created. FORT IS DOWN!
     this.stackedTentacleArr.forEach(function(stackedTentacle) {
-      if (stackedTentacle.y < this.canvas.height - stackedTentacle.height * 4) {
+      // 100 is size of fort wall. 30
+      if (
+        stackedTentacle.y <
+        this.canvas.height - stackedTentacle.height * 3 - 100
+      ) {
         this.gameOver();
       }
     }, this);
@@ -174,6 +208,9 @@ Game.prototype.startLoop = function() {
       this.canvas.width,
       this.canvas.height
     );
+
+    // 5. draw the currentShip line
+    this.shipArr[this.selectedShip].drawLine();
 
     // 1. draw the ship
     this.shipArr.forEach(function(element) {
@@ -213,13 +250,17 @@ Game.prototype.startLoop = function() {
 Game.prototype.checkCannonballHit = function() {
   this.tentacleArr.forEach(function(tentacle) {
     // var tentacle = tentacleArr[x]
+    var tentacleIndex = this.tentacleArr.indexOf(tentacle);
     this.cannonballArr.forEach(function(cannonball) {
+      var cannonballIndex = this.cannonballArr.indexOf(cannonball);
       // var cannonball = cannonballArr[x]
       if (cannonball.cannonballHit(tentacle)) {
-        tentacle.y = this.canvas.height + tentacle.height;
-        cannonball.y = 0 - cannonball.size;
-        // extra points for killing tentacles
-        this.score = this.score + 200;
+        console.log(tentacleIndex);
+        // destroy both the tentacler and cannonball
+        this.tentacleArr.splice(tentacleIndex, 1);
+        this.cannonballArr.splice(cannonballIndex, 1);
+        // extra points for killing tentacles    **NOT WORKING WHILE INCREASING DIFICULTY*
+        this.killScore = this.killScore + 10;
       }
     }, this);
   }, this);
@@ -235,18 +276,17 @@ Game.prototype.checkTentacleStack = function() {
       if (tentacle.tentacleStack(stackedTentacle)) {
         this.stackedTentacleArr.push(this.tentacleArr[indexOfTentacle]);
         this.tentacleArr.splice(indexOfTentacle, 1);
-        // this.gameOver();
       }
     }, this);
   }, this);
 };
 
 // to make tentacles form a stack from bottom. change normal array to stacked array.
-Game.prototype.checkTentacleReachBottom = function() {
+Game.prototype.tentacleReachFort = function() {
   this.tentacleArr.forEach(function(tentacle) {
     // var tentacle = tentacleArr[x]
     var indexOfTentacle = this.tentacleArr.indexOf(tentacle);
-    if (tentacle.reachBottom(tentacle)) {
+    if (tentacle.checkReachFort(tentacle)) {
       this.stackedTentacleArr.push(this.tentacleArr[indexOfTentacle]);
       this.tentacleArr.splice(indexOfTentacle, 1);
     }
@@ -255,7 +295,8 @@ Game.prototype.checkTentacleReachBottom = function() {
 
 // to calculate the score
 Game.prototype.calculateScore = function() {
-  this.score++;
+  this.loopCount++;
+  if (this.loopCount % 60 === 0) this.timeScore++;
 };
 
 // to check possible game over scenario
@@ -290,8 +331,10 @@ Game.prototype.shootCannonballs = function() {
     );
     this.cannonballArr.push(newCannonball);
 
-    // to add delay to the shoot that will be removed on a setTimeout
+    // to make ship stop after shooting. *QoL*.
+    this.shipArr[this.selectedShip].direction = 0;
 
+    // to add delay to the shoot that will be removed on a setTimeout
     this.shipArr[this.selectedShip].canShoot = false;
 
     // setTimeout for the shoot delay

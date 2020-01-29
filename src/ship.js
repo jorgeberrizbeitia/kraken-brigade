@@ -15,7 +15,7 @@ function Ship(canvas, yPosition) {
   this.speed = 3;
 
   this.canShoot = true;
-  this.canMove = true;
+  // this.canMove = true;
   // diferent types of ship images
   this.imageRightGreen = "./img/ship-right-canshoot.png";
   this.imageLeftGreen = "./img/ship-left-canshoot.png";
@@ -33,15 +33,15 @@ Ship.prototype.draw = function(shipImage) {
   // fillRect(x, y, width, height)
   //   this.ctx.fillRect(this.x, this.y, this.width, this.heigth);
   if (this.direction < 0 && this.canShoot === true) {
-    this.shipImage.src = this.imageLeftGreen
+    this.shipImage.src = this.imageLeftGreen;
   } else if (this.direction < 0 && this.canShoot === false) {
-    this.shipImage.src = this.imageLeftRed
+    this.shipImage.src = this.imageLeftRed;
   } else if (this.direction >= 0 && this.canShoot === true) {
-    this.shipImage.src = this.imageRightGreen
+    this.shipImage.src = this.imageRightGreen;
   } else if (this.direction >= 0 && this.canShoot === false) {
-    this.shipImage.src = this.imageRightRed
-}
-    this.ctx.drawImage(this.shipImage, this.x, this.y, this.width, this.heigth);
+    this.shipImage.src = this.imageRightRed;
+  }
+  this.ctx.drawImage(this.shipImage, this.x, this.y, this.width, this.heigth);
 };
 
 // to change direction based on keydown
@@ -67,4 +67,12 @@ Ship.prototype.handleScreenCollision = function() {
   } else if (this.x < screenLeft) {
     this.direction = 1;
   }
+};
+
+Ship.prototype.drawLine = function() {
+  this.ctx.beginPath(); // Start a new path
+  this.ctx.strokeStyle = "silver";
+  this.ctx.moveTo(10, this.y + (this.heigth / 2));
+  this.ctx.lineTo(this.canvas.width - 10, this.y + (this.heigth / 2));
+  this.ctx.stroke();
 };

@@ -14,7 +14,7 @@ function Cannonball(canvas, shipPositionX, shipPositionY) {
   this.cannonballImage.src = './img/cannonBall.png'
 }
 
-// cannonball draw when keydown is pressed
+// to draw element into the canvas
 Cannonball.prototype.draw = function() {    
 //   this.ctx.fillStyle = "blue";
 

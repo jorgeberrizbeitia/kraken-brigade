@@ -1,7 +1,7 @@
 "use strict";
 
 // tentacle construct
-function Tentacle(canvas, x) {
+function Tentacle(canvas, x, speed) {
   this.canvas = canvas;
   this.ctx = this.canvas.getContext("2d");
 
@@ -9,20 +9,28 @@ function Tentacle(canvas, x) {
   this.width = 30;
   this.x = x;
   this.y = 0;
-  this.speed = 1;
+  this.speed = speed;
 
   this.tentacleImage = new Image();
-  this.tentacleImage.src = './img/tentacle.png'
+  this.tentacleImageRight = './img/tentacleRight.png'
+  this.tentacleImageLeft = './img/tentacleLeft.png'
+  this.tentacleImage.src = './img/tentacleRight.png'
+
+  this.imageTimer = 0
+
+  this.score = 0
 }
 
-// tentacle draw
-Tentacle.prototype.draw = function() {
-//   this.ctx.fillStyle = "green";
+// to draw element into the canvas
+Tentacle.prototype.draw = function() { //                                *** WORKING HERE ***
+  this.imageTimer++
 
-  // fillRect(x, y,width, height)
+  if (this.imageTimer %23 === 0) {
+  this.tentacleImage.src = this.tentacleImageRight
+} else if (this.imageTimer %12 === 0) {
+  this.tentacleImage.src = this.tentacleImageLeft
+}
   this.ctx.drawImage(this.tentacleImage, this.x, this.y, this.width, this.height)
-
-//   this.ctx.fillRect(this.x, this.y, this.width, this.height);
 };
 
 // tentacle automatic movement
@@ -31,17 +39,17 @@ Tentacle.prototype.move = function() {
 };
 
 // to check if tentacles reached the bottom of the screen
-Tentacle.prototype.reachBottom = function(tentacle) {
+Tentacle.prototype.checkReachFort = function(tentacle) {
   // variables for easier reading
   var tentacleBottom = tentacle.y + tentacle.height;
-  var bottomOfScreen = this.canvas.height;
+  var fortFront = this.canvas.height - 50;
 
   // below is a check to not consider tentacles destroyed by cannonballs which are sent below this point
   var passBottomOfScreen = this.canvas.height + tentacle.height;
 
   // collision check
   if (
-    tentacleBottom >= bottomOfScreen &&
+    tentacleBottom >= fortFront &&
     tentacleBottom <= passBottomOfScreen
   ) {
     return true;
