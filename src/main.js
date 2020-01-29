@@ -84,7 +84,7 @@ function main() {
   }
 
   // SETTING GAME OVER SCREEN
-  function createGameOverScreen(score) {
+  function createGameOverScreen(totalScore) {
     gameOverScreen = buildDom(`
     <main>
         <div class="container">
@@ -92,7 +92,7 @@ function main() {
                 <h1>YARR!!</h1>
             </div>
             <div id="score">
-                <h2>your score is... ${score}</h2>
+                <h2>your score is... ${totalScore}</h2>
             </div>
             <button id="restart-btn" class="button" >RESTART!</button>
         </div>
@@ -130,9 +130,7 @@ function main() {
 
   function gameOver() {
     removeGameScreen();
-    createGameOverScreen(this.score);
-
-    console.log("game over in main");
+    createGameOverScreen(this.totalScore);
   }
 
   // to initialize the splash creen on first page load

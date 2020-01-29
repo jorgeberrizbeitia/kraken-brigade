@@ -109,16 +109,16 @@ Game.prototype.startLoop = function() {
       console.log("normal")
     } else if (this.totalScore > 160 && this.totalScore < 240) {
       this.spawnCheck = 0.988;
-      this.tentacleSpeed = 1.5
+      this.tentacleSpeed = 1.3
       console.log("hard")
     } else if (this.totalScore > 240) {
       this.spawnCheck = 0.984;
-      this.tentacleSpeed = 1.5
+      this.tentacleSpeed = 1.3
       console.log("HARDEST")
     }
 
-    // 1. create tentacles randomly
-    if (Math.random() > this.spawnCheck) {
+    // 1. create tentacles randomly. arrauy length check is not to add too many tentacles.
+    if (Math.random() > this.spawnCheck && this.tentacleArr.length < 5) {
       // determine random position
       var randomPosition = 0;
       var randomCalc = this.canvas.width * Math.random();
@@ -255,7 +255,6 @@ Game.prototype.checkCannonballHit = function() {
       var cannonballIndex = this.cannonballArr.indexOf(cannonball);
       // var cannonball = cannonballArr[x]
       if (cannonball.cannonballHit(tentacle)) {
-        console.log(tentacleIndex);
         // destroy both the tentacler and cannonball
         this.tentacleArr.splice(tentacleIndex, 1);
         this.cannonballArr.splice(cannonballIndex, 1);
@@ -302,8 +301,6 @@ Game.prototype.calculateScore = function() {
 // to check possible game over scenario
 Game.prototype.gameOver = function() {
   this.gameIsOver = true;
-
-  console.log("game is over in game");
 
   // callback function being called after the game is over
   this.startOver();
