@@ -36,7 +36,7 @@ function Game() {
 
   this.soundShoot = new Audio("./sounds/cannon.mp3");
   this.soundDificultyUp = new Audio("./sounds/dificulty.mp3");
-  this.music;
+  this.music = new Audio("./sounds/music.ogg")
   this.soundSquish = new Audio("./sounds/squish.wav");
 }
 
@@ -100,8 +100,8 @@ Game.prototype.start = function() {
   };
   window.addEventListener("keydown", this.keyDownEvents.bind(this));
 
-  // this.music.volume = 0.1;
-  // this.music.play();
+  this.music.volume = 0.1;                                         // ********* WORKING HERE *************
+  this.music.play();
 
   // start the game loop
   this.startLoop();
@@ -215,11 +215,7 @@ Game.prototype.startLoop = function() {
 
     // 1. draw the ship                                     ******* REVISE THIS ********
     this.shipArr.forEach(function(element) {
-      if (element.canShoot === true) {
         element.draw();
-      } else if (element.canShoot === false) {
-        element.draw();
-      }
     });
 
     // 2. draw moving tentacles
