@@ -24,7 +24,7 @@ function Game() {
   this.loopCount = 0;
   this.spawnCheck = 0; // to check the chances of enemies appearing
   this.tentacleSpeed = 1; // tentacle speed that changes with dificulty
-  this.dificultyMessage = ""
+  this.dificultyMessage = "";
 
   this.gameIsOver = false;
   this.gameScreen = null;
@@ -33,6 +33,11 @@ function Game() {
   this.background.src = "./img/game-background.png";
 
   this.currentShipLine = null; // line that shows current controlled ship *QoL*
+
+  this.soundShoot = new Audio("./sounds/cannon.mp3");
+  this.soundDificultyUp = new Audio("./sounds/dificulty.mp3");
+  this.music;
+  this.soundSquish = new Audio("./sounds/squish.wav");
 }
 
 // to start game
@@ -46,7 +51,9 @@ Game.prototype.start = function() {
   var containerHeight = this.canvasContainer.offsetHeight;
 
   this.timeScoreBoard = this.gameScreen.querySelector(".time-score .value");
-  this.dificultyBoard = this.gameScreen.querySelector(".dificulty-message .value");
+  this.dificultyBoard = this.gameScreen.querySelector(
+    ".dificulty-message .value"
+  );
   this.killScoreBoard = this.gameScreen.querySelector(".kill-score .value");
 
   this.canvas.setAttribute("width", containerWidth);
@@ -93,6 +100,9 @@ Game.prototype.start = function() {
   };
   window.addEventListener("keydown", this.keyDownEvents.bind(this));
 
+  // this.music.volume = 0.1;
+  // this.music.play();
+
   // start the game loop
   this.startLoop();
 };
@@ -101,27 +111,7 @@ Game.prototype.start = function() {
 Game.prototype.startLoop = function() {
   var loop = function() {
     //  increasing dificulty formula that affects speed and # of tentacles.
-    if (this.totalScore < 80) {
-      this.spawnCheck = 0.996;
-      this.tentacleSpeed = 1
-      this.dificultyMessage = "ahoy"
-      document.querySelector(".dificulty-message .value").setAttribute("style", "color: #F93D3D")
-    } else if (this.totalScore > 80 && this.totalScore < 160) {
-      this.spawnCheck = 0.992;
-      this.tentacleSpeed = 1
-      this.dificultyMessage = "ahooooy!!"
-      document.querySelector(".dificulty-message .value").setAttribute("style", "color: #C83737")
-    } else if (this.totalScore > 160 && this.totalScore < 240) {
-      this.spawnCheck = 0.988;
-      this.tentacleSpeed = 1.3
-      this.dificultyMessage = "AHOOOOOOOOY!!"
-      document.querySelector(".dificulty-message .value").setAttribute("style", "color: #901C1C")
-    } else if (this.totalScore > 240) {
-      this.spawnCheck = 0.984;
-      this.tentacleSpeed = 1.3
-      this.dificultyMessage = "AHOoOoOOoooOOoOY!!!!!"
-      document.querySelector(".dificulty-message .value").setAttribute("style", "color: #611212")
-    }
+    this.dificultyIncrease();
 
     // 1. create tentacles randomly. arrauy length check is not to add too many tentacles.
     if (Math.random() > this.spawnCheck && this.tentacleArr.length < 5) {
@@ -138,7 +128,11 @@ Game.prototype.startLoop = function() {
       }
 
       // to create new tentacle and add to their array
-      var newTentacle = new Tentacle(this.canvas, randomPosition, this.tentacleSpeed);
+      var newTentacle = new Tentacle(
+        this.canvas,
+        randomPosition,
+        this.tentacleSpeed
+      );
       this.tentacleArr.push(newTentacle);
     }
 
@@ -189,8 +183,7 @@ Game.prototype.startLoop = function() {
     this.timeScoreBoard.innerHTML = this.timeScore;
     this.killScoreBoard.innerHTML = this.killScore;
     this.totalScore = this.timeScore + this.killScore;
-    this.dificultyBoard.innerHTML = this.dificultyMessage
-
+    this.dificultyBoard.innerHTML = this.dificultyMessage;
 
     // 11. to end game when 4th stack of tentacles is created. FORT IS DOWN!
     this.stackedTentacleArr.forEach(function(stackedTentacle) {
@@ -220,12 +213,12 @@ Game.prototype.startLoop = function() {
     // 0. draw the currentShip line
     this.shipArr[this.selectedShip].drawLine();
 
-    // 1. draw the ship
+    // 1. draw the ship                                     ******* REVISE THIS ********
     this.shipArr.forEach(function(element) {
       if (element.canShoot === true) {
-        element.draw("black");
+        element.draw();
       } else if (element.canShoot === false) {
-        element.draw("purple");
+        element.draw();
       }
     });
 
@@ -266,8 +259,12 @@ Game.prototype.checkCannonballHit = function() {
         // destroy both the tentacler and cannonball
         this.tentacleArr.splice(tentacleIndex, 1);
         this.cannonballArr.splice(cannonballIndex, 1);
-        // extra points for killing tentacles    **NOT WORKING WHILE INCREASING DIFICULTY*
+        // extra points for killing tentacles
         this.killScore = this.killScore + 10;
+        // sound for tentacle hit
+        this.soundSquish.volume = 0.1;
+        this.soundSquish.currentTime = 0;
+        this.soundSquish.play();
       }
     }, this);
   }, this);
@@ -350,6 +347,11 @@ Game.prototype.shootCannonballs = function() {
       }.bind(this),
       2000
     );
+
+    // to create shooting sound
+    this.soundShoot.volume = 0.1;
+    this.soundShoot.currentTime = 0;
+    this.soundShoot.play();
   }
 };
 
@@ -381,5 +383,61 @@ Game.prototype.handleTentacleCollision = function(ship, stackedTentacle) {
     } else if (crossTentacleFromRight) {
       ship.direction = ship.direction * -1;
     }
+  }
+};
+
+// to increase dificulty when score goes up
+Game.prototype.dificultyIncrease = function() {
+  console.log("running function");
+  if (this.timeScore < 20) {
+    this.spawnCheck = 0.996;
+    this.tentacleSpeed = 1;
+    this.dificultyMessage = "ahoy";
+    document
+      .querySelector(".dificulty-message .value")
+      .setAttribute("style", "color: #ff4d4d");
+  } else if (this.timeScore > 20 && this.timeScore < 40) {
+    this.spawnCheck = 0.992;
+    this.tentacleSpeed = 1.1;
+    this.dificultyMessage = "ahooooy!!";
+    document
+      .querySelector(".dificulty-message .value")
+      .setAttribute("style", "color: #ff0000");
+  } else if (this.timeScore > 40 && this.timeScore < 60) {
+    this.spawnCheck = 0.988;
+    this.tentacleSpeed = 1.2;
+    this.dificultyMessage = "AHOOOOOOOOY!!";
+    document
+      .querySelector(".dificulty-message .value")
+      .setAttribute("style", "color: #b30000");
+  } else if (this.timeScore > 60 && this.timeScore < 80) {
+    this.spawnCheck = 0.984;
+    this.tentacleSpeed = 1.3;
+    this.dificultyMessage = "AHOoOoOOoooOOoOY!!!!!";
+    document
+      .querySelector(".dificulty-message .value")
+      .setAttribute("style", "color: #800000");
+  } else if (this.timeScore > 80 && this.timeScore < 100) {
+    this.spawnCheck = 0.98;
+    this.tentacleSpeed = 1.4;
+    this.dificultyMessage = "AHOoOoOOoYooooYYOOoOY!!!!!";
+    document
+      .querySelector(".dificulty-message .value")
+      .setAttribute("style", "color: #660000");
+  } else if (this.timeScore > 120) {
+    this.spawnCheck = 0.974;
+    this.tentacleSpeed = 1.5;
+    this.dificultyMessage = "AAAAHHHHHHHHHHHHHHHHHHHHHH!!!!!";
+    document
+      .querySelector(".dificulty-message .value")
+      .setAttribute("style", "color: #330000");
+  }
+
+  // to add sound to the dificulty change.button
+
+  if (this.timeScore % 20 === 0 && this.timeScore !== 0) {
+    console.log("sound");
+    this.soundDificultyUp.volume = 0.1;
+    this.soundDificultyUp.play();
   }
 };

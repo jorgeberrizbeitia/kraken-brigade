@@ -27,7 +27,7 @@ function Ship(canvas, yPosition) {
 }
 
 // to add ship
-Ship.prototype.draw = function(shipImage) {
+Ship.prototype.draw = function() {
   //   this.ctx.fillStyle = color;
 
   // fillRect(x, y, width, height)

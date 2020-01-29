@@ -14,6 +14,7 @@ function Tentacle(canvas, x, speed) {
   this.tentacleImage = new Image();
   this.tentacleImageRight = './img/tentacleRight.png'
   this.tentacleImageLeft = './img/tentacleLeft.png'
+
   this.tentacleImage.src = './img/tentacleRight.png'
 
   this.imageTimer = 0
@@ -22,7 +23,7 @@ function Tentacle(canvas, x, speed) {
 }
 
 // to draw element into the canvas
-Tentacle.prototype.draw = function() { //                                *** WORKING HERE ***
+Tentacle.prototype.draw = function() {
   this.imageTimer++
 
   if (this.imageTimer %23 === 0) {
