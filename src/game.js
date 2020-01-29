@@ -109,17 +109,17 @@ Game.prototype.startLoop = function() {
     } else if (this.totalScore > 80 && this.totalScore < 160) {
       this.spawnCheck = 0.992;
       this.tentacleSpeed = 1
-      this.dificultyMessage = "ahoooy!!"
+      this.dificultyMessage = "ahooooy!!"
       document.querySelector(".dificulty-message .value").setAttribute("style", "color: #C83737")
     } else if (this.totalScore > 160 && this.totalScore < 240) {
       this.spawnCheck = 0.988;
       this.tentacleSpeed = 1.3
-      this.dificultyMessage = "AHOOOOY!!"
+      this.dificultyMessage = "AHOOOOOOOOY!!"
       document.querySelector(".dificulty-message .value").setAttribute("style", "color: #901C1C")
     } else if (this.totalScore > 240) {
       this.spawnCheck = 0.984;
       this.tentacleSpeed = 1.3
-      this.dificultyMessage = "AHOoOoOoOY!!!!"
+      this.dificultyMessage = "AHOoOoOOoooOOoOY!!!!!"
       document.querySelector(".dificulty-message .value").setAttribute("style", "color: #611212")
     }
 

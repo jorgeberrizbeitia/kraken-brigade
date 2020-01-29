@@ -29,6 +29,7 @@ function main() {
                     Arrow Left -> Move Ship Left<br>
                     Arrow Right -> Move Ship Right<br>
                     Arrow Up -> Shoot Those Darn Tentacles!<br>
+                    Arrow Down -> Anchor the Ship!<br>
                     Q -> Toogle Between Ships<br>
                     </p>
                 </div>
