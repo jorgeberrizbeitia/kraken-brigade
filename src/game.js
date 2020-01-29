@@ -24,6 +24,7 @@ function Game() {
   this.loopCount = 0;
   this.spawnCheck = 0; // to check the chances of enemies appearing
   this.tentacleSpeed = 1; // tentacle speed that changes with dificulty
+  this.dificultyMessage = ""
 
   this.gameIsOver = false;
   this.gameScreen = null;
@@ -45,6 +46,7 @@ Game.prototype.start = function() {
   var containerHeight = this.canvasContainer.offsetHeight;
 
   this.timeScoreBoard = this.gameScreen.querySelector(".time-score .value");
+  this.dificultyBoard = this.gameScreen.querySelector(".dificulty-message .value");
   this.killScoreBoard = this.gameScreen.querySelector(".kill-score .value");
 
   this.canvas.setAttribute("width", containerWidth);
@@ -102,19 +104,23 @@ Game.prototype.startLoop = function() {
     if (this.totalScore < 80) {
       this.spawnCheck = 0.996;
       this.tentacleSpeed = 1
-      console.log("easy")
+      this.dificultyMessage = "ahoy"
+      document.querySelector(".dificulty-message .value").setAttribute("style", "color: #F93D3D")
     } else if (this.totalScore > 80 && this.totalScore < 160) {
       this.spawnCheck = 0.992;
       this.tentacleSpeed = 1
-      console.log("normal")
+      this.dificultyMessage = "ahoooy!!"
+      document.querySelector(".dificulty-message .value").setAttribute("style", "color: #C83737")
     } else if (this.totalScore > 160 && this.totalScore < 240) {
       this.spawnCheck = 0.988;
       this.tentacleSpeed = 1.3
-      console.log("hard")
+      this.dificultyMessage = "AHOOOOY!!"
+      document.querySelector(".dificulty-message .value").setAttribute("style", "color: #901C1C")
     } else if (this.totalScore > 240) {
       this.spawnCheck = 0.984;
       this.tentacleSpeed = 1.3
-      console.log("HARDEST")
+      this.dificultyMessage = "AHOoOoOoOY!!!!"
+      document.querySelector(".dificulty-message .value").setAttribute("style", "color: #611212")
     }
 
     // 1. create tentacles randomly. arrauy length check is not to add too many tentacles.
@@ -178,11 +184,13 @@ Game.prototype.startLoop = function() {
       this.checkCannonballHit();
     }
 
-    // 10. call to calculate score and insert on DOM
+    // 10. call to calculate score and other board elements and insert on DOM
     this.calculateScore();
     this.timeScoreBoard.innerHTML = this.timeScore;
     this.killScoreBoard.innerHTML = this.killScore;
     this.totalScore = this.timeScore + this.killScore;
+    this.dificultyBoard.innerHTML = this.dificultyMessage
+
 
     // 11. to end game when 4th stack of tentacles is created. FORT IS DOWN!
     this.stackedTentacleArr.forEach(function(stackedTentacle) {
@@ -209,7 +217,7 @@ Game.prototype.startLoop = function() {
       this.canvas.height
     );
 
-    // 5. draw the currentShip line
+    // 0. draw the currentShip line
     this.shipArr[this.selectedShip].drawLine();
 
     // 1. draw the ship

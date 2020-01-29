@@ -61,6 +61,10 @@ function main() {
           <span class="label">Kill Score:</span>
           <span class="value"></span>
         </div>
+        <div class="dificulty-message score">
+          <span class="label">Dificulty:</span>
+          <span class="value"></span>
+        </div>
         <div class="time-score score">
           <span class="label">Time Score:</span>
           <span class="value"></span>
