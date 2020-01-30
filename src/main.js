@@ -18,27 +18,31 @@ function main() {
   // SETTING GAME SPLASH SCREEN
   function createSplashScreen() {
     splashScreen = buildDom(`
-        <main>
-            <div class="container">
-                <div id="title-box">
-                    <h1>Kraken Brigade</h1>
-                </div>
-                <div id="instructions-box">
-                    <h2>Instructions!</h2>
-                    <p>
-                    Arrow Left --> Move Ship Left<br>
-                    Arrow Right --> Move Ship Right<br>
-                    Arrow Up --> Shoot Those Darn Tentacles!<br>
-                    Arrow Down --> Anchor the Ship!<br>
-                    Q --> Toogle Between Ships<br>
-                    P --> PIRATE POWAH! *use it wisely*
-                    </p>
-                </div>
-                <div>
-                    <button id="start-btn" class ="button">START!</button>
-                </div>
-            </div>
-        </main>`);
+      <main>
+        <div class="container">
+          <div id="title-box">
+            <h1>Kraken Brigade</h1>
+          </div>
+          <div id="instructions-box">
+            <h2>Instructions!</h2>
+            <p>
+              Shoot the tentacles and avoid getting them stacked after the dotted line<br>
+              <br>
+              Arrow Left --> Move Ship Left<br>
+              Arrow Right --> Move Ship Right<br>
+              Arrow Up --> Shoot Those Darn Tentacles!<br>
+              Arrow Down --> Anchor the Ship!<br>
+              Q --> Toogle Between Ships<br>
+              P --> PIRATE POWAH! *use it wisely*
+              </p>
+          </div>
+          <div class="input-container">
+            <label for="name" >Name: </label>
+            <input type="text" id="name" maxlength="24">
+            <button id="start-btn" class ="button">START!</button>
+          </div>
+        </div>
+      </main>`);
 
     document.body.appendChild(splashScreen);
 
@@ -90,10 +94,37 @@ function main() {
 
   // SETTING GAME OVER SCREEN
   function createGameOverScreen(totalScore) {
+    var scoreRanking = JSON.parse(localStorage.getItem("score"));
 
-    var scoreRanking = JSON.parse(localStorage.getItem("score"))
+    if (scoreRanking[0]) {
+      var scoreStr1 = `${scoreRanking[0].name} : ${scoreRanking[0].score}`;
+    } else {
+      var scoreStr1 = "filty landlubber : 0";
+    }
 
-console.log(scoreRanking[0].score)
+    if (scoreRanking[1]) {
+      var scoreStr2 = `${scoreRanking[1].name} : ${scoreRanking[1].score}`;
+    } else {
+      var scoreStr2 = "filty landlubber : 0";
+    }
+
+    if (scoreRanking[2]) {
+      var scoreStr3 = `${scoreRanking[2].name} : ${scoreRanking[2].score}`;
+    } else {
+      var scoreStr3 = "filty landlubber : 0";
+    }
+
+    if (scoreRanking[3]) {
+      var scoreStr4 = `${scoreRanking[3].name} : ${scoreRanking[3].score}`;
+    } else {
+      var scoreStr4 = "filty landlubber : 0";
+    }
+
+    if (scoreRanking[4]) {
+      var scoreStr5 = `${scoreRanking[4].name} : ${scoreRanking[4].score}`;
+    } else {
+      var scoreStr5 = "filty landlubber : 0";
+    }
 
     gameOverScreen = buildDom(`
     <main>
@@ -107,13 +138,15 @@ console.log(scoreRanking[0].score)
             <div id="scoreboard">
             <h2> High Score: </h2>
               <ul>
-                <li> ${scoreRanking[0].name} : ${scoreRanking[0].score} </li>
-                <li> ${scoreRanking[1].name} : ${scoreRanking[1].score} </li>
-                <li> ${scoreRanking[2].name} : ${scoreRanking[2].score} </li>
-                <li> ${scoreRanking[3].name} : ${scoreRanking[3].score} </li>
-                <li> ${scoreRanking[4].name} : ${scoreRanking[4].score} </li>
+                <li> ${scoreStr1} </li>
+                <li> ${scoreStr2} </li>
+                <li> ${scoreStr3} </li>
+                <li> ${scoreStr4} </li>
+                <li> ${scoreStr5} </li>
               </ul>
-            </div>
+            </div class="input-container">
+            <label for="name" >Name: </label>
+            <input type="text" id="name" maxlength="24">
             <button id="restart-btn" class="button" >RESTART!</button>
         </div>
     </main>`);
@@ -135,10 +168,16 @@ console.log(scoreRanking[0].score)
   // SETTING THE GAME STATE
 
   function startGame() {
+    if (!document.querySelector("input").value) {
+      inputNameMain = "filty landlubber"
+    } else {
+      var inputNameMain = document.querySelector("input").value;
+    }
+
     removeSplashScreen();
     removeGameOverScreen();
 
-    game = new Game();
+    game = new Game(inputNameMain);
     game.gameScreen = createGameScreen();
 
     // function that starts the game loop

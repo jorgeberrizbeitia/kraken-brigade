@@ -1,7 +1,7 @@
 "use strict";
 
 // to create Game construct
-function Game() {
+function Game(inputNameMain) {
   this.canvas = null;
   this.ctx = null;
 
@@ -37,6 +37,8 @@ function Game() {
 
   this.specialPowerCheck = true;
 
+  this.inputName = inputNameMain;
+
   // sounds!
   this.music = new Audio("./sounds/music.ogg");
   this.soundShoot = new Audio("./sounds/cannon.mp3");
@@ -48,6 +50,7 @@ function Game() {
 // to start game
 Game.prototype.start = function() {
   // canvas creation
+
   this.canvasContainer = document.querySelector(".canvas-container");
   this.canvas = this.canvasContainer.querySelector("canvas");
   this.ctx = this.canvas.getContext("2d");
@@ -195,28 +198,32 @@ Game.prototype.startLoop = function() {
       this.canvas.height
     );
 
-    // 0. draw the currentShip line
+    // 1. draw the currentShip line
     this.shipArr[this.selectedShip].drawLine();
 
-    // 1. draw the ship
+    // 2. draw line indicator for game over
+    this.drawLineGameOver();
+
+    // 3. draw the ship
     this.shipArr.forEach(function(element) {
       element.draw();
     });
 
-    // 2. draw moving tentacles
+    // 4. draw moving tentacles
     this.tentacleArr.forEach(function(element) {
       element.draw();
     });
 
-    // 3. draw stacked tentacles
+    // 5. draw stacked tentacles
     this.stackedTentacleArr.forEach(function(element) {
       element.draw();
     });
 
-    // 4. draw cannonballs
+    // 6. draw cannonballs
     this.cannonballArr.forEach(function(element) {
       element.draw();
     });
+
 
     // TO ANIMATE LOOP ONLY IF GAME IS NOT OVER YET
     if (!this.gameIsOver) {
@@ -232,7 +239,7 @@ Game.prototype.startLoop = function() {
 
 Game.prototype.createTentacles = function() {
   if (Math.random() > this.spawnCheck && this.tentacleArr.length < 5) {
-    // determine random position 
+    // determine random position
     var randomPosition = 0;
     var randomCalc = this.canvas.width * Math.random();
 
@@ -316,7 +323,7 @@ Game.prototype.calculateScore = function() {
 
 // to check possible game over scenario
 Game.prototype.gameOver = function() {
-  this.updateScore("bob", this.totalScore);
+  this.updateScore(this.inputName, this.totalScore);
 
   this.music.currentTime = 200;
   this.soundGameOver.volume = 0.1;
@@ -461,25 +468,28 @@ Game.prototype.specialPower = function() {
     for (let i = 0; i < 25; i++) {
       setTimeout(
         function() {
-          var randomSpawn = Math.random() * this.canvas.width
-          var newCannonball = new Cannonball(this.canvas, randomSpawn, this.canvas.height);
+          var randomSpawn = Math.random() * this.canvas.width;
+          var newCannonball = new Cannonball(
+            this.canvas,
+            randomSpawn,
+            this.canvas.height
+          );
           this.cannonballArr.push(newCannonball);
-
         }.bind(this),
         i * 50
-        );
-      }
+      );
+    }
 
-      for (let i = 0; i < 6; i++) {
-        setTimeout(
-          function() {
-            this.soundShoot.volume = 0.1;
-            this.soundShoot.currentTime = 0;
-            this.soundShoot.play();
-          }.bind(this),
-          i * 200
-          );
-        }
+    for (let i = 0; i < 6; i++) {
+      setTimeout(
+        function() {
+          this.soundShoot.volume = 0.1;
+          this.soundShoot.currentTime = 0;
+          this.soundShoot.play();
+        }.bind(this),
+        i * 200
+      );
+    }
 
     this.specialPowerCheck = false;
 
@@ -510,7 +520,7 @@ Game.prototype.updateScore = function(nameArg, scoreArg) {
     } else if (a.score > b.score) {
       return -1;
     } else {
-      return 0; // comparison by name here.
+      return 0;
     }
   });
 
@@ -524,4 +534,22 @@ Game.prototype.updateScore = function(nameArg, scoreArg) {
 
   const updatedScoreStr = JSON.stringify(updatedScoreArr);
   localStorage.setItem("score", updatedScoreStr);
+};
+
+Game.prototype.drawLineGameOver = function() {
+  this.ctx.beginPath(); // Start a new path
+  this.ctx.strokeStyle = "lightSalmon";
+
+  for (let i = 0; i < this.canvas.width; i++) {
+    if (i % 10 === 0) {
+    this.ctx.moveTo(i, this.canvas.height - 250);
+    this.ctx.lineTo(i+5, this.canvas.height - 250);
+    }
+  }
+
+  // this.ctx.moveTo(10, this.canvas.height - 250);
+  // this.ctx.lineTo(60, this.canvas.height - 250);
+  // this.ctx.moveTo(this.canvas.width - 60, this.canvas.height - 250);
+  // this.ctx.lineTo(this.canvas.width - 10, this.canvas.height - 250);
+  this.ctx.stroke();
 };

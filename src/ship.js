@@ -75,3 +75,5 @@ Ship.prototype.drawLine = function() {
   this.ctx.lineTo(this.canvas.width - 10, this.y + (this.heigth / 2));
   this.ctx.stroke();
 };
+
+
