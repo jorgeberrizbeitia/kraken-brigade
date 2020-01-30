@@ -26,11 +26,12 @@ function main() {
                 <div id="instructions-box">
                     <h2>Instructions!</h2>
                     <p>
-                    Arrow Left -> Move Ship Left<br>
-                    Arrow Right -> Move Ship Right<br>
-                    Arrow Up -> Shoot Those Darn Tentacles!<br>
-                    Arrow Down -> Anchor the Ship!<br>
-                    Q -> Toogle Between Ships<br>
+                    Arrow Left --> Move Ship Left<br>
+                    Arrow Right --> Move Ship Right<br>
+                    Arrow Up --> Shoot Those Darn Tentacles!<br>
+                    Arrow Down --> Anchor the Ship!<br>
+                    Q --> Toogle Between Ships<br>
+                    P --> PIRATE POWAH! *use it wisely*
                     </p>
                 </div>
                 <div>

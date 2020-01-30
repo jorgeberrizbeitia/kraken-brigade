@@ -35,6 +35,8 @@ function Game() {
 
   this.currentShipLine = null; // line that shows current controlled ship *QoL*
 
+  this.specialPowerCheck = true;
+
   // sounds!
   this.music = new Audio("./sounds/music.ogg");
   this.soundShoot = new Audio("./sounds/cannon.mp3");
@@ -98,6 +100,9 @@ Game.prototype.start = function() {
         break;
       case "ArrowUp":
         this.shootCannonballs();
+        break;
+      case "p":
+        this.specialPower();
         break;
     }
   };
@@ -226,8 +231,8 @@ Game.prototype.startLoop = function() {
 };
 
 Game.prototype.createTentacles = function() {
-  if (Math.random() > this.spawnCheck && this.tentacleArr.length < 500) {
-    // determine random position                                              // ********WORKING HERE**********
+  if (Math.random() > this.spawnCheck && this.tentacleArr.length < 5) {
+    // determine random position 
     var randomPosition = 0;
     var randomCalc = this.canvas.width * Math.random();
 
@@ -401,7 +406,7 @@ Game.prototype.handleTentacleCollision = function(ship, stackedTentacle) {
 Game.prototype.dificultyIncrease = function() {
   console.log("running function");
   if (this.timeScore < 20) {
-    this.spawnCheck = 0.596; // ********WORKING HERE**********
+    this.spawnCheck = 0.996;
     this.tentacleSpeed = 1;
     this.dificultyMessage = "ahoy";
     document
@@ -448,6 +453,37 @@ Game.prototype.dificultyIncrease = function() {
   if (this.timeScore % 20 === 0 && this.timeScore !== 0) {
     this.soundDificultyUp.volume = 0.1;
     this.soundDificultyUp.play();
+  }
+};
+
+Game.prototype.specialPower = function() {
+  if (this.specialPowerCheck === true) {
+    for (let i = 0; i < 25; i++) {
+      setTimeout(
+        function() {
+          var randomSpawn = Math.random() * this.canvas.width
+          var newCannonball = new Cannonball(this.canvas, randomSpawn, this.canvas.height);
+          this.cannonballArr.push(newCannonball);
+
+        }.bind(this),
+        i * 50
+        );
+      }
+
+      for (let i = 0; i < 6; i++) {
+        setTimeout(
+          function() {
+            this.soundShoot.volume = 0.1;
+            this.soundShoot.currentTime = 0;
+            this.soundShoot.play();
+          }.bind(this),
+          i * 200
+          );
+        }
+
+    this.specialPowerCheck = false;
+
+    // to create shooting sound
   }
 };
 
