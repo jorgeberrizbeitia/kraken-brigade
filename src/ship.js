@@ -28,10 +28,7 @@ function Ship(canvas, yPosition) {
 
 // to add ship
 Ship.prototype.draw = function() {
-  //   this.ctx.fillStyle = color;
-
-  // fillRect(x, y, width, height)
-  //   this.ctx.fillRect(this.x, this.y, this.width, this.heigth);
+  // below is to determine the ship image Red/green Left/Right
   if (this.direction < 0 && this.canShoot === true) {
     this.shipImage.src = this.imageLeftGreen;
   } else if (this.direction < 0 && this.canShoot === false) {
@@ -41,6 +38,7 @@ Ship.prototype.draw = function() {
   } else if (this.direction >= 0 && this.canShoot === false) {
     this.shipImage.src = this.imageRightRed;
   }
+  // to draw above selected image
   this.ctx.drawImage(this.shipImage, this.x, this.y, this.width, this.heigth);
 };
 
@@ -69,6 +67,7 @@ Ship.prototype.handleScreenCollision = function() {
   }
 };
 
+// to draw line for current controlling ship indicator
 Ship.prototype.drawLine = function() {
   this.ctx.beginPath(); // Start a new path
   this.ctx.strokeStyle = "silver";

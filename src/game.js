@@ -20,6 +20,7 @@ function Game() {
   this.timeScore = 0;
   this.killScore = 0;
   this.totalScore = 0;
+  this.scoreScreen = [];
 
   this.loopCount = 0;
   this.spawnCheck = 0; // to check the chances of enemies appearing
@@ -34,10 +35,12 @@ function Game() {
 
   this.currentShipLine = null; // line that shows current controlled ship *QoL*
 
+  // sounds!
+  this.music = new Audio("./sounds/music.ogg");
   this.soundShoot = new Audio("./sounds/cannon.mp3");
   this.soundDificultyUp = new Audio("./sounds/dificulty.mp3");
-  this.music = new Audio("./sounds/music.ogg")
   this.soundSquish = new Audio("./sounds/squish.wav");
+  this.soundGameOver = new Audio("./sounds/gameOver.mp3");
 }
 
 // to start game
@@ -100,7 +103,7 @@ Game.prototype.start = function() {
   };
   window.addEventListener("keydown", this.keyDownEvents.bind(this));
 
-  this.music.volume = 0.1;                                         // ********* WORKING HERE *************
+  this.music.volume = 0.1;
   this.music.play();
 
   // start the game loop
@@ -113,28 +116,8 @@ Game.prototype.startLoop = function() {
     //  increasing dificulty formula that affects speed and # of tentacles.
     this.dificultyIncrease();
 
-    // 1. create tentacles randomly. arrauy length check is not to add too many tentacles.
-    if (Math.random() > this.spawnCheck && this.tentacleArr.length < 5) {
-      // determine random position
-      var randomPosition = 0;
-      var randomCalc = this.canvas.width * Math.random();
-
-      if (randomCalc < 20) {
-        randomPosition = 10;
-      } else if (randomCalc > this.canvas.width - 50) {
-        randomPosition = this.canvas.width - 60;
-      } else {
-        randomPosition = randomCalc;
-      }
-
-      // to create new tentacle and add to their array
-      var newTentacle = new Tentacle(
-        this.canvas,
-        randomPosition,
-        this.tentacleSpeed
-      );
-      this.tentacleArr.push(newTentacle);
-    }
+    // 1. create tentacles randomly. array length check is not to add too many tentacles.
+    this.createTentacles();
 
     // 2. call for automatic tentacle movement
     this.tentacleArr.forEach(function(element) {
@@ -180,10 +163,6 @@ Game.prototype.startLoop = function() {
 
     // 10. call to calculate score and other board elements and insert on DOM
     this.calculateScore();
-    this.timeScoreBoard.innerHTML = this.timeScore;
-    this.killScoreBoard.innerHTML = this.killScore;
-    this.totalScore = this.timeScore + this.killScore;
-    this.dificultyBoard.innerHTML = this.dificultyMessage;
 
     // 11. to end game when 4th stack of tentacles is created. FORT IS DOWN!
     this.stackedTentacleArr.forEach(function(stackedTentacle) {
@@ -192,7 +171,8 @@ Game.prototype.startLoop = function() {
         stackedTentacle.y <
         this.canvas.height - stackedTentacle.height * 3 - 100
       ) {
-        this.gameOver();
+        this.gameIsOver = true;
+        // this.gameOver();
       }
     }, this);
 
@@ -213,9 +193,9 @@ Game.prototype.startLoop = function() {
     // 0. draw the currentShip line
     this.shipArr[this.selectedShip].drawLine();
 
-    // 1. draw the ship                                     ******* REVISE THIS ********
+    // 1. draw the ship
     this.shipArr.forEach(function(element) {
-        element.draw();
+      element.draw();
     });
 
     // 2. draw moving tentacles
@@ -236,11 +216,37 @@ Game.prototype.startLoop = function() {
     // TO ANIMATE LOOP ONLY IF GAME IS NOT OVER YET
     if (!this.gameIsOver) {
       requestAnimationFrame(loop);
+    } else if (this.gameIsOver) {
+      this.gameOver();
     }
   }.bind(this);
 
   // request animation frame (loop)
   loop();
+};
+
+Game.prototype.createTentacles = function() {
+  if (Math.random() > this.spawnCheck && this.tentacleArr.length < 500) {
+    // determine random position                                              // ********WORKING HERE**********
+    var randomPosition = 0;
+    var randomCalc = this.canvas.width * Math.random();
+
+    if (randomCalc < 20) {
+      randomPosition = 10;
+    } else if (randomCalc > this.canvas.width - 50) {
+      randomPosition = this.canvas.width - 60;
+    } else {
+      randomPosition = randomCalc;
+    }
+
+    // to create new tentacle and add to their array
+    var newTentacle = new Tentacle(
+      this.canvas,
+      randomPosition,
+      this.tentacleSpeed
+    );
+    this.tentacleArr.push(newTentacle);
+  }
 };
 
 // to check collisions between all cannonballs and all tentacles
@@ -297,10 +303,19 @@ Game.prototype.tentacleReachFort = function() {
 Game.prototype.calculateScore = function() {
   this.loopCount++;
   if (this.loopCount % 60 === 0) this.timeScore++;
+  this.timeScoreBoard.innerHTML = this.timeScore;
+  this.killScoreBoard.innerHTML = this.killScore;
+  this.totalScore = this.timeScore + this.killScore;
+  this.dificultyBoard.innerHTML = this.dificultyMessage;
 };
 
 // to check possible game over scenario
 Game.prototype.gameOver = function() {
+  this.updateScore("bob", this.totalScore);
+
+  this.music.currentTime = 200;
+  this.soundGameOver.volume = 0.1;
+  this.soundGameOver.play();
   this.gameIsOver = true;
 
   // callback function being called after the game is over
@@ -386,7 +401,7 @@ Game.prototype.handleTentacleCollision = function(ship, stackedTentacle) {
 Game.prototype.dificultyIncrease = function() {
   console.log("running function");
   if (this.timeScore < 20) {
-    this.spawnCheck = 0.996;
+    this.spawnCheck = 0.596; // ********WORKING HERE**********
     this.tentacleSpeed = 1;
     this.dificultyMessage = "ahoy";
     document
@@ -430,10 +445,47 @@ Game.prototype.dificultyIncrease = function() {
   }
 
   // to add sound to the dificulty change.button
-
   if (this.timeScore % 20 === 0 && this.timeScore !== 0) {
-    console.log("sound");
     this.soundDificultyUp.volume = 0.1;
     this.soundDificultyUp.play();
   }
+};
+
+Game.prototype.updateScore = function(nameArg, scoreArg) {
+  // get previous score as object
+  var previousScoreStr = localStorage.getItem("score");
+
+  var previousScoreArr;
+
+  // check if local storage exists
+  if (!previousScoreStr) {
+    previousScoreArr = [];
+  } else {
+    previousScoreArr = JSON.parse(previousScoreStr);
+  }
+
+  var newScore = { name: nameArg, score: scoreArg };
+  previousScoreArr.push(newScore);
+
+  // sorting function
+  previousScoreArr.sort(function(a, b) {
+    if (a.score < b.score) {
+      return 1;
+    } else if (a.score > b.score) {
+      return -1;
+    } else {
+      return 0; // comparison by name here.
+    }
+  });
+
+  var updatedScoreArr;
+
+  if (previousScoreArr.length > 5) {
+    updatedScoreArr = previousScoreArr.splice(0, 5);
+  } else {
+    updatedScoreArr = previousScoreArr;
+  }
+
+  const updatedScoreStr = JSON.stringify(updatedScoreArr);
+  localStorage.setItem("score", updatedScoreStr);
 };

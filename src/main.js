@@ -38,7 +38,6 @@ function main() {
                 </div>
             </div>
         </main>`);
-        
 
     document.body.appendChild(splashScreen);
 
@@ -90,6 +89,11 @@ function main() {
 
   // SETTING GAME OVER SCREEN
   function createGameOverScreen(totalScore) {
+
+    var scoreRanking = JSON.parse(localStorage.getItem("score"))
+
+console.log(scoreRanking[0].score)
+
     gameOverScreen = buildDom(`
     <main>
         <div class="container">
@@ -98,6 +102,16 @@ function main() {
             </div>
             <div id="score">
                 <h2>your score is... ${totalScore}</h2>
+            </div>
+            <div id="scoreboard">
+            <h2> High Score: </h2>
+              <ul>
+                <li> ${scoreRanking[0].name} : ${scoreRanking[0].score} </li>
+                <li> ${scoreRanking[1].name} : ${scoreRanking[1].score} </li>
+                <li> ${scoreRanking[2].name} : ${scoreRanking[2].score} </li>
+                <li> ${scoreRanking[3].name} : ${scoreRanking[3].score} </li>
+                <li> ${scoreRanking[4].name} : ${scoreRanking[4].score} </li>
+              </ul>
             </div>
             <button id="restart-btn" class="button" >RESTART!</button>
         </div>
